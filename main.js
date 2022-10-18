@@ -3,6 +3,8 @@ import './style.css'
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
+import polygonBuilder from './polygonBuilder.js'
+
 // INIT
 const canvas    = document.getElementById('bg')
 const scene     = new THREE.Scene()
@@ -20,7 +22,7 @@ grid.rotation.x = Math.PI / 2;
 scene.add(grid);
 
 const axesHelper = new THREE.AxesHelper(100);
-// scene.add(axesHelper);
+scene.add(axesHelper);
 
 // const controls = new OrbitControls(camera, renderer.domElement)
 
@@ -32,52 +34,29 @@ plane.name = 'plane'
 // scene.add(plane);
 
 // CUBE
-const cubeShape = new THREE.Shape()
-  .moveTo(0, 0)
-  .lineTo(10, 0)
-  .lineTo(10, 10)
-  .lineTo(0, 10)
-  .lineTo(0, 0)
-
-const cubeBottomGeometry = new THREE.ShapeGeometry(cubeShape);
-cubeBottomGeometry.center();
-const cubeBottomMaterial = new THREE.MeshBasicMaterial({ color: 'yellow' })
-const cubeBottomMesh = new THREE.Mesh(cubeBottomGeometry, cubeBottomMaterial)
-cubeBottomMesh.userData.type = 'bottom'
-
-const cubeGeometry = new THREE.ExtrudeGeometry(cubeShape, { depth: 1, bevelEnabled: false });
-cubeGeometry.center();
-const cubeMaterial = new THREE.MeshBasicMaterial({ color: 0xfff1111, wireframe: true })
-const cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial)
-cubeMesh.position.z = 0.5
-
-const cubeTopShape = new THREE.Shape()
-  .moveTo(0, 0)
-  .lineTo(8, 0)
-  .lineTo(8, 8)
-  .lineTo(0, 8)
-  .lineTo(0, 0)
-
-const cubeTopGeometry = new THREE.ShapeGeometry(cubeTopShape)
-cubeTopGeometry.center();
-const cubeTopMaterial = new THREE.MeshBasicMaterial({ color: 0xeeeeeee })
-const cubeTopMesh = new THREE.Mesh(cubeTopGeometry, cubeTopMaterial)
-cubeTopMesh.userData.type = 'drag-target'
-cubeTopMesh.position.z = 1.01
-
-const cube = new THREE.Group()
-cube.name = 'cube'
-cube.add(cubeBottomMesh)
-cube.add(cubeMesh)
-cube.add(cubeTopMesh)
+const cube = polygonBuilder({
+  points: [[-5, -5], [5, -5], [5, 5], [-5, 5], [-5, -5]],
+  name: 'cube'
+})
 scene.add(cube)
 
-const box = new THREE.Box3();
-const triangleBox = new THREE.Triangle();
-
 // TRIANGLES
-const triangle = buildTriangle(10)
+const triangle = polygonBuilder({
+  isTriangle: true,
+  size: 10,
+  name: 'triangle'
+})
 scene.add(triangle)
+
+const bigTriangle = polygonBuilder({
+  isTriangle: true,
+  size: 20,
+  name: 'bigTriangle'
+})
+scene.add(bigTriangle)
+
+const polygons = [cube, triangle, bigTriangle]
+
 
 
 // RAYCASTER
@@ -104,7 +83,7 @@ function onPointerDown(event) {
   pointer.y = - (event.clientY / canvas.height) * 2 + 1;
 
   raycaster.setFromCamera(pointer, camera)
-  const intersection = raycaster.intersectObjects([cube, triangle])[0];
+  const intersection = raycaster.intersectObjects(polygons)[0];
 
   if (intersection) {
     currentMovingObject = intersection.object
@@ -133,8 +112,7 @@ function onPointerMove(event) {
   raycaster.setFromCamera(pointer, camera);
   const planeIntersectionPoint = raycaster.intersectObject(plane)[0].point;
 
-  console.log(currentMovingObject)
-  if (currentMovingObject.userData.type == 'drag-target') {
+  if (currentMovingObject.userData.type == 'top') {
     dragObject(planeIntersectionPoint)
   } else {
     rotateObject(planeIntersectionPoint)
@@ -151,46 +129,4 @@ function rotateObject(planeIntersectionPoint) {
   localIntersection.y = planeIntersectionPoint.y - currentMovingObject.parent.position.y
 
   currentMovingObject.parent.rotation.z = localIntersection.angle()
-}
-
-function buildTriangle(size) {
-  let hypotenuse = size * Math.sqrt(2)
-
-  const triangleShape = new THREE.Shape()
-    .moveTo(-(hypotenuse / 2), 0)
-    .lineTo((hypotenuse / 2), 0)
-    .lineTo(0, hypotenuse / 2)
-
-  const triangleBottomGeometry = new THREE.ShapeGeometry(triangleShape);
-  triangleBottomGeometry.translate(0, -((hypotenuse / 2) / 3), 0)
-  const triangleBottomMaterial = new THREE.MeshBasicMaterial({ color: 'yellow' })
-  const triangleBottomMesh = new THREE.Mesh(triangleBottomGeometry, triangleBottomMaterial)
-  triangleBottomMesh.userData.type = 'bottom'
-
-  const triangleGeometry = new THREE.ExtrudeGeometry(triangleShape, { depth: 1, bevelEnabled: false });
-  triangleGeometry.translate(0, -((hypotenuse / 2) / 3), 0)
-  const triangleMaterial = new THREE.MeshBasicMaterial({ color: 0xfff1111, wireframe: true })
-  const triangleMesh = new THREE.Mesh(triangleGeometry, triangleMaterial)
-
-  hypotenuse = (size - 2) * Math.sqrt(2)
-
-  const triangleTopShape = new THREE.Shape()
-    .moveTo(-(hypotenuse / 2), 0)
-    .lineTo((hypotenuse / 2), 0)
-    .lineTo(0, hypotenuse / 2)
-
-  const triangleTopGeometry = new THREE.ShapeGeometry(triangleTopShape)
-  triangleTopGeometry.translate(0, -((hypotenuse / 2) / 3), 0)
-  const triangleTopMaterial = new THREE.MeshBasicMaterial({ color: 0xeeeeeee })
-  const triangleTopMesh = new THREE.Mesh(triangleTopGeometry, triangleTopMaterial)
-  triangleTopMesh.userData.type = 'drag-target'
-  triangleTopMesh.position.z = 1.01
-
-  const triangle = new THREE.Group()
-  triangle.name = 'triangle'
-  triangle.add(triangleBottomMesh)
-  triangle.add(triangleMesh)
-  triangle.add(triangleTopMesh)
-
-  return triangle
 }
