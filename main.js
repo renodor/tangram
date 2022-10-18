@@ -57,8 +57,6 @@ scene.add(bigTriangle)
 
 const polygons = [cube, triangle, bigTriangle]
 
-
-
 // RAYCASTER
 const raycaster         = new THREE.Raycaster()
 const pointer           = new THREE.Vector2()

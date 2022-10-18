@@ -1,10 +1,10 @@
 import * as THREE from 'three';
 
-export default (properties) => {
+export default ({ isTriangle, size, points, name }) => {
   // SHAPE
-  const shape = new THREE.Shape()
-  const points = properties.isTriangle ? buildTrianglePoints(properties) : properties.points
-  points.forEach(([x, y]) => shape.lineTo(x, y))
+  const shape  = new THREE.Shape()
+  const shapePoints = isTriangle ? buildTrianglePoints(size) : points
+  shapePoints.forEach(([x, y]) => shape.lineTo(x, y))
 
   // BOTTOM
   const bottomGeometry = new THREE.ShapeGeometry(shape);
@@ -15,12 +15,10 @@ export default (properties) => {
   // CENTER
   const geometry = new THREE.ExtrudeGeometry(shape, { depth: 1, bevelEnabled: false });
   const material = new THREE.MeshBasicMaterial({ color: 0xfff1111, wireframe: true })
-  const mesh = new THREE.Mesh(geometry, material)
+  const mesh     = new THREE.Mesh(geometry, material)
 
   // TOP
-  const topShape = shape.clone()
-  // smallerPoints.forEach(([x, y]) => topShape.lineTo(x, y))
-
+  const topShape    = shape.clone()
   const topGeometry = new THREE.ShapeGeometry(topShape)
   const topMaterial = new THREE.MeshBasicMaterial({ color: 0xeeeeeee })
   const topMesh     = new THREE.Mesh(topGeometry, topMaterial)
@@ -28,8 +26,8 @@ export default (properties) => {
   topMesh.userData.type = 'top'
   topMesh.position.z = 1.01
 
-  if (properties.isTriangle) {
-    const hypotenuse = properties.size * Math.sqrt(2)
+  if (isTriangle) {
+    const hypotenuse = size * Math.sqrt(2)
     bottomGeometry.translate(0, -((hypotenuse / 2) / 3), 0)
     geometry.translate(0, -((hypotenuse / 2) / 3), 0)
     topGeometry.translate(0, -((hypotenuse / 2) / 3), 0)
@@ -37,7 +35,7 @@ export default (properties) => {
 
   // POLYGON
   const polygon = new THREE.Group()
-  polygon.name = properties.name
+  polygon.name = name
   polygon.add(bottomMesh)
   polygon.add(topMesh)
   polygon.add(mesh)
@@ -45,7 +43,7 @@ export default (properties) => {
   return polygon
 }
 
-const buildTrianglePoints = ({ points, isTriangle, size }) => {
+const buildTrianglePoints = (size) => {
   const hypotenuse = size * Math.sqrt(2)
   return [
     [-(hypotenuse / 2), 0],
