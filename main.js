@@ -24,7 +24,7 @@ scene.add(grid);
 const axesHelper = new THREE.AxesHelper(100);
 scene.add(axesHelper);
 
-// const controls = new OrbitControls(camera, renderer.domElement)
+const controls = new OrbitControls(camera, renderer.domElement)
 
 // PLANE
 const planeGeometry = new THREE.PlaneGeometry(window.innerWidth, window.innerHeight);
@@ -33,29 +33,33 @@ const plane = new THREE.Mesh(planeGeometry, planeMaterial)
 plane.name = 'plane'
 // scene.add(plane);
 
-// CUBE
+//Build polygons
+
 const cube = polygonBuilder({
-  points: [[-5, -5], [5, -5], [5, 5], [-5, 5], [-5, -5]],
+  type: 'cube',
+  size: 10,
   name: 'cube'
 })
 scene.add(cube)
 
-// TRIANGLES
 const triangle = polygonBuilder({
-  isTriangle: true,
+  type: 'triangle',
   size: 10,
   name: 'triangle'
 })
 scene.add(triangle)
 
 const bigTriangle = polygonBuilder({
-  isTriangle: true,
+  type: 'triangle',
   size: 20,
   name: 'bigTriangle'
 })
 scene.add(bigTriangle)
 
-const polygons = [cube, triangle, bigTriangle]
+// Collision
+const coordinate = new THREE.Vector3()
+
+const polygons = [bigTriangle, triangle, cube]
 
 // RAYCASTER
 const raycaster         = new THREE.Raycaster()
@@ -63,7 +67,7 @@ const pointer           = new THREE.Vector2()
 const localIntersection = new THREE.Vector2()
 
 // CURRENT OBJECT
-let currentMovingObject
+let currentMovingPolygon
 
 canvas.addEventListener('pointerdown', onPointerDown)
 canvas.addEventListener('pointerup', onPointerUp);
@@ -72,7 +76,7 @@ animate();
 
 function animate() {
   requestAnimationFrame(animate)
-  // controls.update()
+  controls.update()
   renderer.render(scene, camera)
 }
 
@@ -84,9 +88,10 @@ function onPointerDown(event) {
   const intersection = raycaster.intersectObjects(polygons)[0];
 
   if (intersection) {
-    currentMovingObject = intersection.object
-    currentMovingObject.parent.position.z = 1
-    const bottom = currentMovingObject.parent.children.find(children => children.userData.type == 'bottom')
+    controls.enabled = false
+    currentMovingPolygon = intersection.object
+    currentMovingPolygon.parent.position.z = 1
+    const bottom = currentMovingPolygon.parent.children.find(children => children.userData.type == 'bottom')
     if (bottom) {
       bottom.position.z -= 1
     }
@@ -96,10 +101,19 @@ function onPointerDown(event) {
 
 function onPointerUp() {
   canvas.removeEventListener('pointermove', onPointerMove)
-  currentMovingObject.parent.position.z = 0
-  const bottom = currentMovingObject.parent.children.find(children => children.userData.type == 'bottom')
-  if (bottom) {
+
+  if (currentMovingPolygon) {
+    currentMovingPolygon.parent.position.z = 0
+    const bottom = currentMovingPolygon.parent.children.find(children => children.userData.type == 'bottom')
     bottom.position.z = 0
+
+    updatePolygonPoints(currentMovingPolygon.parent)
+    if (collision(currentMovingPolygon.parent)) {
+      console.log('booom')
+    }
+
+    currentMovingPolygon = null
+    controls.enabled = true
   }
 }
 
@@ -110,7 +124,7 @@ function onPointerMove(event) {
   raycaster.setFromCamera(pointer, camera);
   const planeIntersectionPoint = raycaster.intersectObject(plane)[0].point;
 
-  if (currentMovingObject.userData.type == 'top') {
+  if (currentMovingPolygon.userData.type == 'top') {
     dragObject(planeIntersectionPoint)
   } else {
     rotateObject(planeIntersectionPoint)
@@ -118,13 +132,57 @@ function onPointerMove(event) {
 }
 
 function dragObject(planeIntersectionPoint) {
-  currentMovingObject.parent.position.x = planeIntersectionPoint.x
-  currentMovingObject.parent.position.y = planeIntersectionPoint.y
+  currentMovingPolygon.parent.position.x = planeIntersectionPoint.x
+  currentMovingPolygon.parent.position.y = planeIntersectionPoint.y
 }
 
 function rotateObject(planeIntersectionPoint) {
-  localIntersection.x = planeIntersectionPoint.x - currentMovingObject.parent.position.x
-  localIntersection.y = planeIntersectionPoint.y - currentMovingObject.parent.position.y
+  localIntersection.x = planeIntersectionPoint.x - currentMovingPolygon.parent.position.x
+  localIntersection.y = planeIntersectionPoint.y - currentMovingPolygon.parent.position.y
 
-  currentMovingObject.parent.rotation.z = localIntersection.angle()
+  currentMovingPolygon.parent.rotation.z = localIntersection.angle()
 }
+
+function updatePolygonPoints(polygon) {
+  const currentPoints = polygon.userData.originalPoints.map(([x, y]) => {
+    coordinate.set(x, y)
+    polygon.localToWorld(coordinate)
+    return [coordinate.x, coordinate.y]
+  })
+  polygon.userData.currentPoints = currentPoints
+}
+
+function collision(movingPolygon) {
+  const possibleCollindingPolygons = polygons.filter((polygon) => polygon != movingPolygon)
+
+  const movingPolygonIsWithinAnotherOne = movingPolygon.userData.currentPoints.some(([x, y]) => {
+    return possibleCollindingPolygons.some((possibleCollidingObject) => {
+      return pointIsWithinPolygon(possibleCollidingObject.userData.currentPoints, x, y)
+    })
+  })
+
+  if (movingPolygonIsWithinAnotherOne) { return true }
+
+  return possibleCollindingPolygons.some((possibleCollindingObject) => {
+    return possibleCollindingObject.userData.currentPoints.some(([x, y]) => {
+      return pointIsWithinPolygon(movingPolygon.userData.currentPoints, x, y)
+    })
+  })
+}
+
+function pointIsWithinPolygon (polygonPoints, x, y) {
+  let windingNumber = 0; // winding number
+  polygonPoints.slice(0, -1).forEach(([polygonX, polygonY], index) => {
+    const [nextPolygonX, nextPolygonY] = polygonPoints[index + 1]
+    const above = polygonY <= y;
+    const side = (nextPolygonX - polygonX) * (y - polygonY) - (x - polygonX) * (nextPolygonY - polygonY) // if > 0 --> left / if == 0 --> on / if < 0 --> right
+
+    if (above && nextPolygonY > y && side > 0) {
+      windingNumber++
+    } else if (!above && nextPolygonY <= y && side < 0) {
+      windingNumber--
+    }
+  })
+
+  return windingNumber != 0
+};
