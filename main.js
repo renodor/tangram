@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 import polygonBuilder from './polygonBuilder.js'
+import patterns from './patterns.json' assert { type: 'json' };
 
 // INIT
 const canvas    = document.getElementById('bg')
@@ -49,17 +50,17 @@ const triangle = polygonBuilder({
 })
 scene.add(triangle)
 
-const bigTriangle = polygonBuilder({
-  type: 'triangle',
-  size: 20,
-  name: 'bigTriangle'
-})
-scene.add(bigTriangle)
+// const bigTriangle = polygonBuilder({
+//   type: 'triangle',
+//   size: 20,
+//   name: 'bigTriangle'
+// })
+// scene.add(bigTriangle)
 
 // Collision
 const coordinate = new THREE.Vector3()
 
-const polygons = [bigTriangle, triangle, cube]
+const polygons = [triangle, cube]
 
 // RAYCASTER
 const raycaster         = new THREE.Raycaster()
@@ -67,6 +68,7 @@ const pointer           = new THREE.Vector2()
 const localIntersection = new THREE.Vector2()
 
 // CURRENT OBJECT
+let movementType
 let currentMovingPolygon
 
 canvas.addEventListener('pointerdown', onPointerDown)
@@ -89,12 +91,13 @@ function onPointerDown(event) {
 
   if (intersection) {
     controls.enabled = false
-    currentMovingPolygon = intersection.object
-    currentMovingPolygon.parent.position.z = 1
-    const bottom = currentMovingPolygon.parent.children.find(children => children.userData.type == 'bottom')
-    if (bottom) {
-      bottom.position.z -= 1
-    }
+
+    movementType = intersection.object.userData.type == 'top' ? 'drag' : 'rotate'
+    currentMovingPolygon = intersection.object.parent
+    currentMovingPolygon.userData.savedPosition = currentMovingPolygon.position.clone()
+    currentMovingPolygon.userData.savedRotation = currentMovingPolygon.rotation.z
+    currentMovingPolygon.position.z = 1
+
     canvas.addEventListener('pointermove', onPointerMove)
   }
 }
@@ -103,13 +106,17 @@ function onPointerUp() {
   canvas.removeEventListener('pointermove', onPointerMove)
 
   if (currentMovingPolygon) {
-    currentMovingPolygon.parent.position.z = 0
-    const bottom = currentMovingPolygon.parent.children.find(children => children.userData.type == 'bottom')
-    bottom.position.z = 0
+    currentMovingPolygon.position.z = 0
 
-    updatePolygonPoints(currentMovingPolygon.parent)
-    if (collision(currentMovingPolygon.parent)) {
-      console.log('booom')
+    const savedCurrentPoints = currentMovingPolygon.userData.currentPoints
+    updatePolygonPoints(currentMovingPolygon)
+    if (collision(currentMovingPolygon)) {
+      currentMovingPolygon.userData.currentPoints = savedCurrentPoints
+      currentMovingPolygon.position.x = currentMovingPolygon.userData.savedPosition.x
+      currentMovingPolygon.position.y = currentMovingPolygon.userData.savedPosition.y
+      currentMovingPolygon.rotation.z = currentMovingPolygon.userData.savedRotation
+    } else {
+      checkPattern()
     }
 
     currentMovingPolygon = null
@@ -124,7 +131,7 @@ function onPointerMove(event) {
   raycaster.setFromCamera(pointer, camera);
   const planeIntersectionPoint = raycaster.intersectObject(plane)[0].point;
 
-  if (currentMovingPolygon.userData.type == 'top') {
+  if (movementType == 'drag') {
     dragObject(planeIntersectionPoint)
   } else {
     rotateObject(planeIntersectionPoint)
@@ -132,24 +139,29 @@ function onPointerMove(event) {
 }
 
 function dragObject(planeIntersectionPoint) {
-  currentMovingPolygon.parent.position.x = planeIntersectionPoint.x
-  currentMovingPolygon.parent.position.y = planeIntersectionPoint.y
+  currentMovingPolygon.position.x = planeIntersectionPoint.x
+  currentMovingPolygon.position.y = planeIntersectionPoint.y
 }
 
 function rotateObject(planeIntersectionPoint) {
-  localIntersection.x = planeIntersectionPoint.x - currentMovingPolygon.parent.position.x
-  localIntersection.y = planeIntersectionPoint.y - currentMovingPolygon.parent.position.y
+  localIntersection.x = planeIntersectionPoint.x - currentMovingPolygon.position.x
+  localIntersection.y = planeIntersectionPoint.y - currentMovingPolygon.position.y
 
-  currentMovingPolygon.parent.rotation.z = localIntersection.angle()
+  currentMovingPolygon.rotation.z = localIntersection.angle()
 }
 
 function updatePolygonPoints(polygon) {
-  const currentPoints = polygon.userData.originalPoints.map(([x, y]) => {
+  polygon.userData.currentPoints = polygon.userData.originalPoints.map(([x, y]) => {
     coordinate.set(x, y)
     polygon.localToWorld(coordinate)
     return [coordinate.x, coordinate.y]
   })
-  polygon.userData.currentPoints = currentPoints
+
+  polygon.userData.vertices = polygon.userData.originalPoints.map(([x, y]) => {
+    coordinate.set(x, y)
+    polygon.localToWorld(coordinate)
+    return [coordinate.x, coordinate.y]
+  })
 }
 
 function collision(movingPolygon) {
@@ -186,3 +198,22 @@ function pointIsWithinPolygon (polygonPoints, x, y) {
 
   return windingNumber != 0
 };
+
+function polygonVertices(polygon) {
+  return polygon.userData.verticesIndexes.map((index) => polygon.userData.currentPoints[index])
+}
+
+function checkPattern() {
+  const result = polygons.every((polygon) => {
+    const currentVertices = polygonVertices(polygon)
+    if (polygon.name == 'cube') {
+      console.log(currentVertices[0], polygon.userData.originalPoints[0])
+    }
+    return patterns[polygon.name].every(([x, y], index) => {
+      const roundedVertex = currentVertices[index].map((number) => Math.round(number))
+      return (Math.round(x) == roundedVertex[0]) && (Math.round(y) == roundedVertex[1])
+    })
+  })
+
+  if (result) { console.log('Braaaaaavo') }
+}
