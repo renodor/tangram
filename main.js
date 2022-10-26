@@ -3,7 +3,7 @@ import './style.css'
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-import polygonBuilder from './polygonBuilder.js'
+import Tangram from './tangram.js'
 import patterns from './patterns.json' assert { type: 'json' };
 
 // INIT
@@ -34,28 +34,10 @@ const plane = new THREE.Mesh(planeGeometry, planeMaterial)
 plane.name = 'plane'
 // scene.add(plane);
 
-//Build polygons
+const tangram = new Tangram(20)
+const cube = tangram.cube
 
-// const cube = polygonBuilder({
-//   type: 'cube',
-//   size: 10,
-//   name: 'cube'
-// })
-// scene.add(cube)
-
-const triangle = polygonBuilder({
-  type: 'triangle',
-  size: 10,
-  name: 'triangle'
-})
-scene.add(triangle)
-
-// const triangle2 = polygonBuilder({
-//   type: 'triangle',
-//   size: 10,
-//   name: 'triangle'
-// })
-// scene.add(triangle2)
+tangram.polygons.forEach((polygon) => scene.add(polygon))
 
 // const bigTriangle = polygonBuilder({
 //   type: 'triangle',
@@ -71,17 +53,15 @@ scene.add(triangle)
 // })
 // scene.add(bigTriangle2)
 
-const parallelogram = polygonBuilder({
-  type: 'parallelogram',
-  size: 10,
-  name: 'parallelogram'
-})
-scene.add(parallelogram)
+// const parallelogram = polygonBuilder({
+//   type: 'parallelogram',
+//   size: 10,
+//   name: 'parallelogram'
+// })
+// scene.add(parallelogram)
 
 // Collision
 const coordinate = new THREE.Vector3()
-
-const polygons = [parallelogram, triangle]
 
 // RAYCASTER
 const raycaster         = new THREE.Raycaster()
@@ -108,11 +88,12 @@ function onPointerDown(event) {
   pointer.y = - (event.clientY / canvas.height) * 2 + 1;
 
   raycaster.setFromCamera(pointer, camera)
-  const intersection = raycaster.intersectObjects(polygons)[0];
+  const intersection = raycaster.intersectObjects(tangram.polygons)[0];
 
   if (intersection) {
     controls.enabled = false
 
+    console.log(intersection.object.userData.type)
     movementType = intersection.object.userData.type == 'top' ? 'drag' : 'rotate'
     currentMovingPolygon = intersection.object.parent
     currentMovingPolygon.userData.savedPosition = currentMovingPolygon.position.clone()
@@ -139,7 +120,7 @@ function onPointerUp() {
       currentMovingPolygon.position.y = currentMovingPolygon.userData.savedPosition.y
       currentMovingPolygon.rotation.z = currentMovingPolygon.userData.savedRotation
     } else {
-      checkPattern()
+      // checkPattern()
     }
 
     currentMovingPolygon = null
@@ -182,7 +163,7 @@ function updatePolygonPoints(polygon) {
 }
 
 function collision(movingPolygon) {
-  const possibleCollindingPolygons = polygons.filter((polygon) => polygon != movingPolygon)
+  const possibleCollindingPolygons = tangram.polygons.filter((polygon) => polygon != movingPolygon)
 
   const movingPolygonIsWithinAnotherOne = movingPolygon.userData.currentPoints.some(([x, y]) => {
     return possibleCollindingPolygons.some((possibleCollidingObject) => {
@@ -226,7 +207,7 @@ function polygonVerticesToCubeLocal(polygon) {
 }
 
 function checkPattern() {
-  const result = polygons.every((polygon) => {
+  const result = tangram.polygons.every((polygon) => {
     if (polygon.name == 'cube') { return true }
 
     return polygonVerticesToCubeLocal(polygon).every(([x, y], index) => {

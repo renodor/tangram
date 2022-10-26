@@ -1,11 +1,11 @@
 import * as THREE from 'three';
 
 export default ({ type, size, name }) => {
-  const hypotenuse = size * Math.sqrt(2)
+  // const hypotenuse = size * Math.sqrt(2)
 
   // SHAPE
   const shape  = new THREE.Shape()
-  const points = buildPoints(type, size, hypotenuse)
+  const points = buildPoints(type, size)
   points.forEach(([x, y], index) => { index == 0 ? shape.moveTo(x, y) : shape.lineTo(x, y) })
 
   // TOP
@@ -18,7 +18,7 @@ export default ({ type, size, name }) => {
   topMesh.position.z = 1.01
 
   // MAIN
-  const mainGeometry = new THREE.ExtrudeGeometry(shape, { depth: 1, bevelEnabled: false });
+  const mainGeometry = new THREE.ExtrudeGeometry(shape, { depth: 0, bevelEnabled: false });
   const mainMaterial = new THREE.MeshBasicMaterial({ color: 0xfff1111, wireframe: false })
   const mainMesh = new THREE.Mesh(mainGeometry, mainMaterial)
   mainMesh.userData.type = 'main'
@@ -30,8 +30,8 @@ export default ({ type, size, name }) => {
   polygon.add(topMesh)
   polygon.add(mainMesh)
 
-  centerPolygon(polygon, size, hypotenuse)
-  // addCollisionPointsToPolygon(polygon, points, size, hypotenuse)
+  centerPolygon(polygon, size)
+  // addCollisionPointsToPolygon(polygon, points, size)
   // addVerticesIndexesToPolygon(polygon)
 
   // Display Polygon axes
@@ -48,13 +48,13 @@ export default ({ type, size, name }) => {
   return polygon
 }
 
-const buildPoints = (type, size, hypotenuse) => {
+const buildPoints = (type, size) => {
   switch (type) {
     case 'triangle':
       return [
-        [-(hypotenuse / 2), 0],
-        [(hypotenuse / 2), 0],
-        [0, hypotenuse / 2]
+        [-(size / 2), 0],
+        [(size / 2), 0],
+        [0, size / 2]
       ]
     case 'cube':
       return [
@@ -73,10 +73,10 @@ const buildPoints = (type, size, hypotenuse) => {
   }
 }
 
-const centerPolygon = (polygon, size, hypotenuse) => {
+const centerPolygon = (polygon, size) => {
   switch (polygon.userData.type) {
     case 'triangle':
-      polygon.children.forEach((children) => children.geometry.translate(...centerTrianglePoint([0, 0, 0], hypotenuse)))
+      polygon.children.forEach((children) => children.geometry.translate(...centerTrianglePoint([0, 0, 0], size)))
       break;
     case 'cube':
       polygon.children.forEach((children) => children.geometry.translate(...centerCubePoint([0, 0, 0], size)))
@@ -87,20 +87,20 @@ const centerPolygon = (polygon, size, hypotenuse) => {
   }
 }
 
-const centerPoint = (type, point, size, hypotenuse) => {
+const centerPoint = (type, point, size) => {
   switch (type) {
     case 'triangle':
-      return centerTrianglePoint(point, hypotenuse)
+      return centerTrianglePoint(point, size)
     case 'cube':
       return centerCubePoint(point, size)
   }
 }
-const centerTrianglePoint = ([x, y, z], hypotenuse) => ([x, y - ((hypotenuse / 2) / 3), z])
+const centerTrianglePoint = ([x, y, z], size) => ([x, y - ((size / 2) / 3), z])
 const centerCubePoint = ([x, y, z], size) => ([x - (size / 2), y - (size / 2), z])
 const centerParallelogramPoint = ([x, y, z], size) => ([x - (size - 2), y - (size / 4), z])
 
 
-const addCollisionPointsToPolygon = (polygon, points, size, hypotenuse) => {
+const addCollisionPointsToPolygon = (polygon, points, size) => {
   // Add more points to polygon to detect collisions
   const type = polygon.userData.type
   let collisionPoints = []
@@ -126,7 +126,7 @@ const addCollisionPointsToPolygon = (polygon, points, size, hypotenuse) => {
               [x - 0.5, y + 0.5],
               [x - 1, y + 1],
               [x - 1.5, y + 1.5],
-              [hypotenuse / 4, hypotenuse / 4]
+              [size / 4, size / 4]
             )
             break;
           case 2:
@@ -138,7 +138,7 @@ const addCollisionPointsToPolygon = (polygon, points, size, hypotenuse) => {
               [x - 0.5, y - 0.5],
               [x - 1, y - 1],
               [x - 1.5, y - 1.5],
-              [-(hypotenuse / 4), hypotenuse / 4],
+              [-(size / 4), size / 4],
               [points[0][0] + 1.5, points[0][1] + 1.5],
               [points[0][0] + 1, points[0][1] + 1],
               [points[0][0] + 0.5, points[0][1] + 0.5],
@@ -180,7 +180,7 @@ const addCollisionPointsToPolygon = (polygon, points, size, hypotenuse) => {
   }
 
   collisionPoints.push(points[0])
-  collisionPoints = collisionPoints.map(([x, y]) => centerPoint(type, [x, y, 0], size, hypotenuse))
+  collisionPoints = collisionPoints.map(([x, y]) => centerPoint(type, [x, y, 0], size))
 
   polygon.userData.originalPoints = collisionPoints
   polygon.userData.currentPoints = collisionPoints
