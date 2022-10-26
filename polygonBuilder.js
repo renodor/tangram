@@ -6,7 +6,7 @@ export default ({ type, size, name }) => {
   // SHAPE
   const shape  = new THREE.Shape()
   const points = buildPoints(type, size, hypotenuse)
-  points.forEach(([x, y], index) => { index == 0 ? shape.moveTo(x,y) : shape.lineTo(x, y) })
+  points.forEach(([x, y], index) => { index == 0 ? shape.moveTo(x, y) : shape.lineTo(x, y) })
 
   // TOP
   const topShape    = shape.clone()
@@ -31,8 +31,12 @@ export default ({ type, size, name }) => {
   polygon.add(mainMesh)
 
   centerPolygon(polygon, size, hypotenuse)
-  addCollisionPointsToPolygon(polygon, points, size, hypotenuse)
-  addVerticesIndexesToPolygon(polygon)
+  // addCollisionPointsToPolygon(polygon, points, size, hypotenuse)
+  // addVerticesIndexesToPolygon(polygon)
+
+  // Display Polygon axes
+  // const axesHelper = new THREE.AxesHelper(10);
+  // polygon.add(axesHelper);
 
   // Display points helper
   // const displayedPointsShape = new THREE.Shape()
@@ -59,6 +63,13 @@ const buildPoints = (type, size, hypotenuse) => {
         [size, size],
         [0, size]
       ]
+    case 'parallelogram':
+      return [
+        [0, 0],
+        [size, 0],
+        [size + 5, size - 5],
+        [0 + 5, size - 5]
+      ]
   }
 }
 
@@ -69,6 +80,9 @@ const centerPolygon = (polygon, size, hypotenuse) => {
       break;
     case 'cube':
       polygon.children.forEach((children) => children.geometry.translate(...centerCubePoint([0, 0, 0], size)))
+      break;
+    case 'parallelogram':
+      polygon.children.forEach((children) => children.geometry.translate(...centerParallelogramPoint([0, 0, 0], size)))
       break;
   }
 }
@@ -83,6 +97,8 @@ const centerPoint = (type, point, size, hypotenuse) => {
 }
 const centerTrianglePoint = ([x, y, z], hypotenuse) => ([x, y - ((hypotenuse / 2) / 3), z])
 const centerCubePoint = ([x, y, z], size) => ([x - (size / 2), y - (size / 2), z])
+const centerParallelogramPoint = ([x, y, z], size) => ([x - (size - 2), y - (size / 4), z])
+
 
 const addCollisionPointsToPolygon = (polygon, points, size, hypotenuse) => {
   // Add more points to polygon to detect collisions
@@ -178,6 +194,10 @@ const addVerticesIndexesToPolygon = (polygon) => {
       break;
     case 'cube':
       verticesIndexes.push(0, 2, 4, 6)
+      break;
+    case 'parallelogram':
+      verticesIndexes.push(0, 2, 4, 6)
+      break;
   }
 
   polygon.userData.verticesIndexes = verticesIndexes

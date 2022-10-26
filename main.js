@@ -36,12 +36,12 @@ plane.name = 'plane'
 
 //Build polygons
 
-const cube = polygonBuilder({
-  type: 'cube',
-  size: 10,
-  name: 'cube'
-})
-scene.add(cube)
+// const cube = polygonBuilder({
+//   type: 'cube',
+//   size: 10,
+//   name: 'cube'
+// })
+// scene.add(cube)
 
 const triangle = polygonBuilder({
   type: 'triangle',
@@ -50,6 +50,13 @@ const triangle = polygonBuilder({
 })
 scene.add(triangle)
 
+// const triangle2 = polygonBuilder({
+//   type: 'triangle',
+//   size: 10,
+//   name: 'triangle'
+// })
+// scene.add(triangle2)
+
 // const bigTriangle = polygonBuilder({
 //   type: 'triangle',
 //   size: 20,
@@ -57,10 +64,24 @@ scene.add(triangle)
 // })
 // scene.add(bigTriangle)
 
+// const bigTriangle2 = polygonBuilder({
+//   type: 'triangle',
+//   size: 20,
+//   name: 'bigTriangle'
+// })
+// scene.add(bigTriangle2)
+
+const parallelogram = polygonBuilder({
+  type: 'parallelogram',
+  size: 10,
+  name: 'parallelogram'
+})
+scene.add(parallelogram)
+
 // Collision
 const coordinate = new THREE.Vector3()
 
-const polygons = [triangle, cube]
+const polygons = [parallelogram, triangle]
 
 // RAYCASTER
 const raycaster         = new THREE.Raycaster()
@@ -107,6 +128,8 @@ function onPointerUp() {
 
   if (currentMovingPolygon) {
     currentMovingPolygon.position.z = 0
+
+    console.log(currentMovingPolygon)
 
     const savedCurrentPoints = currentMovingPolygon.userData.currentPoints
     updatePolygonPoints(currentMovingPolygon)
@@ -156,12 +179,6 @@ function updatePolygonPoints(polygon) {
     polygon.localToWorld(coordinate)
     return [coordinate.x, coordinate.y]
   })
-
-  polygon.userData.vertices = polygon.userData.originalPoints.map(([x, y]) => {
-    coordinate.set(x, y)
-    polygon.localToWorld(coordinate)
-    return [coordinate.x, coordinate.y]
-  })
 }
 
 function collision(movingPolygon) {
@@ -199,19 +216,21 @@ function pointIsWithinPolygon (polygonPoints, x, y) {
   return windingNumber != 0
 };
 
-function polygonVertices(polygon) {
-  return polygon.userData.verticesIndexes.map((index) => polygon.userData.currentPoints[index])
+function polygonVerticesToCubeLocal(polygon) {
+  return polygon.userData.verticesIndexes.map((index) => {
+    const vertex = polygon.userData.currentPoints[index]
+    coordinate.set(vertex[0], vertex[1])
+    cube.worldToLocal(coordinate)
+    return [coordinate.x, coordinate.y]
+  })
 }
 
 function checkPattern() {
   const result = polygons.every((polygon) => {
-    const currentVertices = polygonVertices(polygon)
-    if (polygon.name == 'cube') {
-      console.log(currentVertices[0], polygon.userData.originalPoints[0])
-    }
-    return patterns[polygon.name].every(([x, y], index) => {
-      const roundedVertex = currentVertices[index].map((number) => Math.round(number))
-      return (Math.round(x) == roundedVertex[0]) && (Math.round(y) == roundedVertex[1])
+    if (polygon.name == 'cube') { return true }
+
+    return polygonVerticesToCubeLocal(polygon).every(([x, y], index) => {
+      return (Math.round(x) == Math.round(patterns[polygon.name][index][0])) && (Math.round(y) == Math.round(patterns[polygon.name][index][1]))
     })
   })
 
