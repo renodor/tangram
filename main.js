@@ -9,7 +9,7 @@ import patterns from './patterns.json' assert { type: 'json' };
 // INIT
 const canvas    = document.getElementById('bg')
 const scene     = new THREE.Scene()
-const camera    = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
+const camera    = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 100)
 const renderer  = new THREE.WebGLRenderer({ antialias: true, canvas: canvas })
 
 renderer.setPixelRatio(window.devicePixelRatio)
@@ -38,27 +38,6 @@ const tangram = new Tangram(20)
 const cube = tangram.cube
 
 tangram.polygons.forEach((polygon) => scene.add(polygon))
-
-// const bigTriangle = polygonBuilder({
-//   type: 'triangle',
-//   size: 20,
-//   name: 'bigTriangle'
-// })
-// scene.add(bigTriangle)
-
-// const bigTriangle2 = polygonBuilder({
-//   type: 'triangle',
-//   size: 20,
-//   name: 'bigTriangle'
-// })
-// scene.add(bigTriangle2)
-
-// const parallelogram = polygonBuilder({
-//   type: 'parallelogram',
-//   size: 10,
-//   name: 'parallelogram'
-// })
-// scene.add(parallelogram)
 
 // Collision
 const coordinate = new THREE.Vector3()

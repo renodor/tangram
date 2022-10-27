@@ -18,7 +18,7 @@ export default ({ type, size, name }) => {
   topMesh.position.z = 1.01
 
   // MAIN
-  const mainGeometry = new THREE.ExtrudeGeometry(shape, { depth: 0, bevelEnabled: false });
+  const mainGeometry = new THREE.ExtrudeGeometry(shape, { depth: 1, bevelEnabled: false });
   const mainMaterial = new THREE.MeshBasicMaterial({ color: 0xfff1111, wireframe: false })
   const mainMesh = new THREE.Mesh(mainGeometry, mainMaterial)
   mainMesh.userData.type = 'main'
@@ -31,19 +31,19 @@ export default ({ type, size, name }) => {
   polygon.add(mainMesh)
 
   centerPolygon(polygon, size)
-  // addCollisionPointsToPolygon(polygon, points, size)
-  // addVerticesIndexesToPolygon(polygon)
+  addCollisionPointsToPolygon(polygon, points, size)
+  addVerticesIndexesToPolygon(polygon)
 
   // Display Polygon axes
   // const axesHelper = new THREE.AxesHelper(10);
   // polygon.add(axesHelper);
 
   // Display points helper
-  // const displayedPointsShape = new THREE.Shape()
-  // polygon.userData.originalPoints.forEach(([x, y], index) => { index == 0 ? displayedPointsShape.moveTo(x, y) : displayedPointsShape.lineTo(x, y) })
-  // const displayedPointsGeometry = new THREE.ShapeGeometry(displayedPointsShape);
-  // const displayedPoints = new THREE.Points(displayedPointsGeometry)
-  // polygon.add(displayedPoints)
+  const displayedPointsShape = new THREE.Shape()
+  polygon.userData.originalPoints.forEach(([x, y], index) => { index == 0 ? displayedPointsShape.moveTo(x, y) : displayedPointsShape.lineTo(x, y) })
+  const displayedPointsGeometry = new THREE.ShapeGeometry(displayedPointsShape);
+  const displayedPoints = new THREE.Points(displayedPointsGeometry)
+  polygon.add(displayedPoints)
 
   return polygon
 }
@@ -93,6 +93,8 @@ const centerPoint = (type, point, size) => {
       return centerTrianglePoint(point, size)
     case 'cube':
       return centerCubePoint(point, size)
+    case 'parallelogram':
+      return centerParallelogramPoint(point, size)
   }
 }
 const centerTrianglePoint = ([x, y, z], size) => ([x, y - ((size / 2) / 3), z])
@@ -171,7 +173,39 @@ const addCollisionPointsToPolygon = (polygon, points, size) => {
           case 3:
             collisionPoints.push(
               [x, y],
-              [0, size / 2],
+              [0, size / 2]
+            )
+            break;
+        }
+      })
+      break;
+    case 'parallelogram':
+      points.forEach(([x, y], index) => {
+        switch (index) {
+          case 0:
+            collisionPoints.push(
+              [x, y],
+              [1, 0],
+              [2, 0],
+              [3, 0]
+            )
+            break;
+          case 1:
+            collisionPoints.push(
+              [x, y]
+            )
+            break;
+          case 2:
+            collisionPoints.push(
+              [x, y],
+              [size + 4, size - 5],
+              [size + 3, size - 5],
+              [(size / 2) + 5, size - 5]
+            )
+            break;
+          case 3:
+            collisionPoints.push(
+              [x, y],
             )
             break;
         }
