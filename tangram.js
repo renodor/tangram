@@ -39,12 +39,12 @@ export default class Tangram {
   get polygons() {
     return [
       this.cube,
-      this.bigTriangle1,
-      this.bigTriangle2,
-      this.mediumTriangle,
+      // this.bigTriangle1,
+      // this.bigTriangle2,
+      // this.mediumTriangle,
       this.smallTriangle1,
-      this.smallTriangle2,
-      this.parallelogram
+      // this.smallTriangle2,
+      // this.parallelogram
     ]
   }
 }

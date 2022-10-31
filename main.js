@@ -2,6 +2,7 @@ import './style.css'
 
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { DragControls } from 'three/addons/controls/DragControls.js';
 
 import Tangram from './tangram.js'
 import patterns from './patterns.json' assert { type: 'json' };
@@ -14,7 +15,7 @@ const renderer  = new THREE.WebGLRenderer({ antialias: true, canvas: canvas })
 
 renderer.setPixelRatio(window.devicePixelRatio)
 renderer.setSize(window.innerWidth, window.innerHeight)
-camera.position.z = 30
+camera.position.z = 50
 
 // HELPERS
 const grid = new THREE.GridHelper(100, 100);
@@ -25,30 +26,28 @@ scene.add(grid);
 const axesHelper = new THREE.AxesHelper(100);
 scene.add(axesHelper);
 
-const controls = new OrbitControls(camera, renderer.domElement)
-
 // PLANE
-const planeGeometry = new THREE.PlaneGeometry(window.innerWidth, window.innerHeight);
-const planeMaterial = new THREE.MeshBasicMaterial({ color: 0x444444 })
-const plane = new THREE.Mesh(planeGeometry, planeMaterial)
-plane.name = 'plane'
-// scene.add(plane);
+const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
 
 const tangram = new Tangram(20)
 const cube = tangram.cube
 
 tangram.polygons.forEach((polygon) => scene.add(polygon))
 
+// Controls
+const orbitControls = new OrbitControls(camera, renderer.domElement)
+
 // Collision
 const coordinate = new THREE.Vector3()
 
 // RAYCASTER
-const raycaster         = new THREE.Raycaster()
-const pointer           = new THREE.Vector2()
-const localIntersection = new THREE.Vector2()
+const raycaster              = new THREE.Raycaster()
+const worldPosition          = new THREE.Vector3()
+const pointer                = new THREE.Vector2()
+const offset                 = new THREE.Vector2()
+const planeIntersectionPoint = new THREE.Vector2()
+const localIntersection      = new THREE.Vector2()
 
-// CURRENT OBJECT
-let movementType
 let currentMovingPolygon
 
 canvas.addEventListener('pointerdown', onPointerDown)
@@ -58,25 +57,36 @@ animate();
 
 function animate() {
   requestAnimationFrame(animate)
-  controls.update()
+  orbitControls.update()
   renderer.render(scene, camera)
 }
 
+function setPointer(x, y) {
+  pointer.set(
+    (x / canvas.width) * 2 - 1,
+    - (y / canvas.height) * 2 + 1
+  )
+}
+
+
 function onPointerDown(event) {
-  pointer.x = (event.clientX / canvas.width) * 2 - 1;
-  pointer.y = - (event.clientY / canvas.height) * 2 + 1;
+  setPointer(event.clientX, event.clientY)
 
   raycaster.setFromCamera(pointer, camera)
-  const intersection = raycaster.intersectObjects(tangram.polygons)[0];
+  const polygonIntersection = raycaster.intersectObjects(tangram.polygons)[0];
 
-  if (intersection) {
-    controls.enabled = false
+  if (polygonIntersection) {
+    orbitControls.enabled = false
 
-    console.log(intersection.object.userData.type)
-    movementType = intersection.object.userData.type == 'top' ? 'drag' : 'rotate'
-    currentMovingPolygon = intersection.object.parent
+    const movementType = polygonIntersection.object.userData.type == 'top' ? 'drag' : 'rotate'
+
+    currentMovingPolygon = polygonIntersection.object.parent
+    currentMovingPolygon.userData.movementType = movementType
     currentMovingPolygon.userData.savedPosition = currentMovingPolygon.position.clone()
     currentMovingPolygon.userData.savedRotation = currentMovingPolygon.rotation.z
+
+    offset.copy(polygonIntersection.point).sub(worldPosition.setFromMatrixPosition(currentMovingPolygon.matrixWorld));
+
     currentMovingPolygon.position.z = 1
 
     canvas.addEventListener('pointermove', onPointerMove)
@@ -89,8 +99,6 @@ function onPointerUp() {
   if (currentMovingPolygon) {
     currentMovingPolygon.position.z = 0
 
-    console.log(currentMovingPolygon)
-
     const savedCurrentPoints = currentMovingPolygon.userData.currentPoints
     updatePolygonPoints(currentMovingPolygon)
     if (collision(currentMovingPolygon)) {
@@ -99,22 +107,21 @@ function onPointerUp() {
       currentMovingPolygon.position.y = currentMovingPolygon.userData.savedPosition.y
       currentMovingPolygon.rotation.z = currentMovingPolygon.userData.savedRotation
     } else {
-      // checkPattern()
+      checkPattern()
     }
 
     currentMovingPolygon = null
-    controls.enabled = true
+    orbitControls.enabled = true
   }
 }
 
 function onPointerMove(event) {
-  pointer.x = (event.clientX / canvas.width) * 2 - 1;
-  pointer.y = - (event.clientY / canvas.height) * 2 + 1;
+  setPointer(event.clientX, event.clientY)
 
   raycaster.setFromCamera(pointer, camera);
-  const planeIntersectionPoint = raycaster.intersectObject(plane)[0].point;
+  raycaster.ray.intersectPlane(plane, planeIntersectionPoint);
 
-  if (movementType == 'drag') {
+  if (currentMovingPolygon.userData.movementType == 'drag') {
     dragObject(planeIntersectionPoint)
   } else {
     rotateObject(planeIntersectionPoint)
@@ -122,15 +129,13 @@ function onPointerMove(event) {
 }
 
 function dragObject(planeIntersectionPoint) {
-  currentMovingPolygon.position.x = planeIntersectionPoint.x
-  currentMovingPolygon.position.y = planeIntersectionPoint.y
+  currentMovingPolygon.position.x = planeIntersectionPoint.x - offset.x
+  currentMovingPolygon.position.y = planeIntersectionPoint.y - offset.y
 }
 
 function rotateObject(planeIntersectionPoint) {
-  localIntersection.x = planeIntersectionPoint.x - currentMovingPolygon.position.x
-  localIntersection.y = planeIntersectionPoint.y - currentMovingPolygon.position.y
-
-  currentMovingPolygon.rotation.z = localIntersection.angle()
+  localIntersection.subVectors(planeIntersectionPoint, currentMovingPolygon.position)
+  currentMovingPolygon.rotation.z = currentMovingPolygon.userData.savedRotation + (localIntersection.angle() - offset.angle())
 }
 
 function updatePolygonPoints(polygon) {

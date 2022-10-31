@@ -39,11 +39,11 @@ export default ({ type, size, name }) => {
   // polygon.add(axesHelper);
 
   // Display points helper
-  const displayedPointsShape = new THREE.Shape()
-  polygon.userData.originalPoints.forEach(([x, y], index) => { index == 0 ? displayedPointsShape.moveTo(x, y) : displayedPointsShape.lineTo(x, y) })
-  const displayedPointsGeometry = new THREE.ShapeGeometry(displayedPointsShape);
-  const displayedPoints = new THREE.Points(displayedPointsGeometry)
-  polygon.add(displayedPoints)
+  // const displayedPointsShape = new THREE.Shape()
+  // polygon.userData.originalPoints.forEach(([x, y], index) => { index == 0 ? displayedPointsShape.moveTo(x, y) : displayedPointsShape.lineTo(x, y) })
+  // const displayedPointsGeometry = new THREE.ShapeGeometry(displayedPointsShape);
+  // const displayedPoints = new THREE.Points(displayedPointsGeometry)
+  // polygon.add(displayedPoints)
 
   return polygon
 }
