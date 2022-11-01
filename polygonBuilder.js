@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export default ({ type, size, name }) => {
+export default ({ type, size, name, duplicated }) => {
   // const hypotenuse = size * Math.sqrt(2)
 
   // SHAPE
@@ -26,6 +26,7 @@ export default ({ type, size, name }) => {
   // POLYGON
   const polygon = new THREE.Group()
   polygon.userData.type = type
+  polygon.userData.duplicated = duplicated
   polygon.name = name
   polygon.add(topMesh)
   polygon.add(mainMesh)

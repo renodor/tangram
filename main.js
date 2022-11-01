@@ -53,6 +53,10 @@ let currentMovingPolygon
 canvas.addEventListener('pointerdown', onPointerDown)
 canvas.addEventListener('pointerup', onPointerUp);
 
+document.getElementById('pattern-reveal').addEventListener('click', event => {
+  console.log(JSON.stringify(revealPattern()))
+});
+
 animate();
 
 function animate() {
@@ -98,6 +102,7 @@ function onPointerUp() {
 
   if (currentMovingPolygon) {
     currentMovingPolygon.position.z = 0
+    // console.log(polygonVerticesToCubeLocal(currentMovingPolygon))
 
     const savedCurrentPoints = currentMovingPolygon.userData.currentPoints
     updatePolygonPoints(currentMovingPolygon)
@@ -191,13 +196,67 @@ function polygonVerticesToCubeLocal(polygon) {
 }
 
 function checkPattern() {
-  const result = tangram.polygons.every((polygon) => {
-    if (polygon.name == 'cube') { return true }
+  for (const [key, value] of Object.entries(patterns)) {
+    const polygonsMatchPattern = tangram.polygons.every((polygon) => {
+      if (polygon.name == 'cube') { return true }
 
-    return polygonVerticesToCubeLocal(polygon).every(([x, y], index) => {
-      return (Math.round(x) == Math.round(patterns[polygon.name][index][0])) && (Math.round(y) == Math.round(patterns[polygon.name][index][1]))
+      return polygonVerticesToCubeLocal(polygon).every(([polygonX, polygonY], index) => {
+        if (polygon.userData.duplicated) {
+          return value[polygon.name].some((patternPoints) => {
+            const xDiff = Math.abs(polygonX - patternPoints[index][0])
+            const yDiff = Math.abs(polygonY - patternPoints[index][1])
+
+            console.log({
+              xDiff: xDiff,
+              yDiff: yDiff,
+              polygonX: polygonX,
+              polygonY: polygonY,
+              patternX: patternPoints[index][0],
+              patternY: patternPoints[index][1],
+              result: (xDiff <= 2) && (yDiff <= 2)
+            })
+            return (xDiff <= 2) && (yDiff <= 2)
+          })
+        } else {
+          const xDiff = Math.abs(polygonX - value[polygon.name][index][0])
+          const yDiff = Math.abs(polygonY - value[polygon.name][index][1])
+
+          console.log({
+            xDiff: xDiff,
+            yDiff: yDiff,
+            polygonX: polygonX,
+            polygonY: polygonY,
+            patternX: value[polygon.name][index][0],
+            patternY: value[polygon.name][index][1],
+            result: (xDiff <= 2) && (yDiff <= 2)
+          })
+          return (xDiff <= 2) && (yDiff <= 2)
+        }
+      })
     })
+
+    if (polygonsMatchPattern) { console.log(`Bravo you found "${key.toUpperCase()}" pattern!`) }
+  }
+}
+
+function roundAtTwoDecimal(num) {
+  return Math.round((num + Number.EPSILON) * 100) / 100
+}
+
+function revealPattern() {
+  const pattern = {}
+  tangram.polygons.forEach((polygon) => {
+    const roundedVertices = polygonVerticesToCubeLocal(polygon).map(([x, y]) => [roundAtTwoDecimal(x), roundAtTwoDecimal(y)])
+    if (polygon.userData.duplicated) {
+      if (polygon.name in pattern) {
+        pattern[polygon.name].push(roundedVertices)
+      } else {
+        pattern[polygon.name] = [roundedVertices]
+      }
+    } else {
+      pattern[polygon.name] = roundedVertices
+    }
   })
 
-  if (result) { console.log('Braaaaaavo') }
+  return pattern
 }
