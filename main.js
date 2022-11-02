@@ -30,7 +30,10 @@ scene.add(axesHelper);
 const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
 
 const tangram = new Tangram(20)
-const cube = tangram.cube
+const patternRef = tangram.mediumTriangle
+
+console.log(tangram.parallelogram.scale)
+console.log(tangram.parallelogram.userData.currentPoints[0])
 
 tangram.polygons.forEach((polygon) => scene.add(polygon))
 
@@ -50,6 +53,7 @@ const localIntersection      = new THREE.Vector2()
 
 let currentMovingPolygon
 
+canvas.addEventListener('dblclick', onDoubleClick)
 canvas.addEventListener('pointerdown', onPointerDown)
 canvas.addEventListener('pointerup', onPointerUp);
 
@@ -72,6 +76,22 @@ function setPointer(x, y) {
   )
 }
 
+function onDoubleClick(event) {
+  setPointer(event.clientX, event.clientY)
+
+  raycaster.setFromCamera(pointer, camera)
+  const polygonIntersection = raycaster.intersectObjects(tangram.polygons)[0];
+
+  if (polygonIntersection) {
+    const movingPolygon = polygonIntersection.object.parent
+    if (movingPolygon.userData.type == 'parallelogram') {
+      flipPolygon(movingPolygon)
+      movingPolygon.updateMatrixWorld()
+      updatePolygonPoints(movingPolygon)
+      checkCollisions(movingPolygon)
+    }
+  }
+}
 
 function onPointerDown(event) {
   setPointer(event.clientX, event.clientY)
@@ -102,16 +122,11 @@ function onPointerUp() {
 
   if (currentMovingPolygon) {
     currentMovingPolygon.position.z = 0
-    // console.log(polygonVerticesToCubeLocal(currentMovingPolygon))
 
-    const savedCurrentPoints = currentMovingPolygon.userData.currentPoints
     updatePolygonPoints(currentMovingPolygon)
-    if (collision(currentMovingPolygon)) {
-      currentMovingPolygon.userData.currentPoints = savedCurrentPoints
-      currentMovingPolygon.position.x = currentMovingPolygon.userData.savedPosition.x
-      currentMovingPolygon.position.y = currentMovingPolygon.userData.savedPosition.y
-      currentMovingPolygon.rotation.z = currentMovingPolygon.userData.savedRotation
-    } else {
+    checkCollisions()
+
+    if (!tangram.polygons.some((polygon) => polygon.userData.isColliding)) {
       checkPattern()
     }
 
@@ -151,22 +166,30 @@ function updatePolygonPoints(polygon) {
   })
 }
 
-function collision(movingPolygon) {
-  const possibleCollindingPolygons = tangram.polygons.filter((polygon) => polygon != movingPolygon)
+function checkCollisions() {
+  tangram.polygons.forEach((polygon) => removeCollisionToPolygon(polygon))
 
-  const movingPolygonIsWithinAnotherOne = movingPolygon.userData.currentPoints.some(([x, y]) => {
-    return possibleCollindingPolygons.some((possibleCollidingObject) => {
-      return pointIsWithinPolygon(possibleCollidingObject.userData.currentPoints, x, y)
+  tangram.polygons.forEach((polygon) => {
+    tangram.polygons.forEach((polygon2) => {
+      if (polygon != polygon2) {
+        const collision = polygon.userData.currentPoints.some(([x, y]) => pointIsWithinPolygon(polygon2.userData.currentPoints, x, y))
+        if (collision) {
+          addCollisionToPolygon(polygon)
+          addCollisionToPolygon(polygon2)
+        }
+      }
     })
   })
+}
 
-  if (movingPolygonIsWithinAnotherOne) { return true }
+function addCollisionToPolygon(polygon) {
+  polygon.userData.isColliding = true
+  polygon.children[1].material.color.setHex(0x808080)
+}
 
-  return possibleCollindingPolygons.some((possibleCollindingObject) => {
-    return possibleCollindingObject.userData.currentPoints.some(([x, y]) => {
-      return pointIsWithinPolygon(movingPolygon.userData.currentPoints, x, y)
-    })
-  })
+function removeCollisionToPolygon(polygon) {
+  polygon.userData.isColliding = false
+  polygon.children[1].material.color.setHex(0xfff1111)
 }
 
 function pointIsWithinPolygon (polygonPoints, x, y) {
@@ -184,13 +207,13 @@ function pointIsWithinPolygon (polygonPoints, x, y) {
   })
 
   return windingNumber != 0
-};
+}
 
-function polygonVerticesToCubeLocal(polygon) {
+function polygonVerticesToPatternRefLocal(polygon) {
   return polygon.userData.verticesIndexes.map((index) => {
     const vertex = polygon.userData.currentPoints[index]
     coordinate.set(vertex[0], vertex[1])
-    cube.worldToLocal(coordinate)
+    patternRef.worldToLocal(coordinate)
     return [coordinate.x, coordinate.y]
   })
 }
@@ -198,39 +221,32 @@ function polygonVerticesToCubeLocal(polygon) {
 function checkPattern() {
   for (const [key, value] of Object.entries(patterns)) {
     const polygonsMatchPattern = tangram.polygons.every((polygon) => {
-      if (polygon.name == 'cube') { return true }
+      if (polygon == patternRef) { return true }
 
-      return polygonVerticesToCubeLocal(polygon).every(([polygonX, polygonY], index) => {
+      return polygonVerticesToPatternRefLocal(polygon).every(([polygonX, polygonY], index) => {
         if (polygon.userData.duplicated) {
           return value[polygon.name].some((patternPoints) => {
             const xDiff = Math.abs(polygonX - patternPoints[index][0])
             const yDiff = Math.abs(polygonY - patternPoints[index][1])
-
-            console.log({
-              xDiff: xDiff,
-              yDiff: yDiff,
-              polygonX: polygonX,
-              polygonY: polygonY,
-              patternX: patternPoints[index][0],
-              patternY: patternPoints[index][1],
-              result: (xDiff <= 2) && (yDiff <= 2)
-            })
             return (xDiff <= 2) && (yDiff <= 2)
           })
         } else {
-          const xDiff = Math.abs(polygonX - value[polygon.name][index][0])
-          const yDiff = Math.abs(polygonY - value[polygon.name][index][1])
+          return value[polygon.name].some(([patternX, patternY]) => {
+            const xDiff = Math.abs(polygonX - patternX)
+            const yDiff = Math.abs(polygonY - patternY)
 
-          console.log({
-            xDiff: xDiff,
-            yDiff: yDiff,
-            polygonX: polygonX,
-            polygonY: polygonY,
-            patternX: value[polygon.name][index][0],
-            patternY: value[polygon.name][index][1],
-            result: (xDiff <= 2) && (yDiff <= 2)
+            // console.log({
+            //   xDiff: xDiff,
+            //   yDiff: yDiff,
+            //   polygonX: polygonX,
+            //   polygonY: polygonY,
+            //   patternX: patternX,
+            //   patternY: value[polygon.name][index][1],
+            //   result: (xDiff <= 2) && (yDiff <= 2)
+            // })
+            return (xDiff <= 2) && (yDiff <= 2)
           })
-          return (xDiff <= 2) && (yDiff <= 2)
+
         }
       })
     })
@@ -246,7 +262,7 @@ function roundAtTwoDecimal(num) {
 function revealPattern() {
   const pattern = {}
   tangram.polygons.forEach((polygon) => {
-    const roundedVertices = polygonVerticesToCubeLocal(polygon).map(([x, y]) => [roundAtTwoDecimal(x), roundAtTwoDecimal(y)])
+    const roundedVertices = polygonVerticesToPatternRefLocal(polygon).map(([x, y]) => [roundAtTwoDecimal(x), roundAtTwoDecimal(y)])
     if (polygon.userData.duplicated) {
       if (polygon.name in pattern) {
         pattern[polygon.name].push(roundedVertices)
@@ -259,4 +275,8 @@ function revealPattern() {
   })
 
   return pattern
+}
+
+function flipPolygon(polygon) {
+  polygon.scale.x *= -1
 }

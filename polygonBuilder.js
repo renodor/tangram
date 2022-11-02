@@ -187,8 +187,7 @@ const addCollisionPointsToPolygon = (polygon, points, size) => {
             collisionPoints.push(
               [x, y],
               [1, 0],
-              [2, 0],
-              [3, 0]
+              [2, 0]
             )
             break;
           case 1:
@@ -200,8 +199,7 @@ const addCollisionPointsToPolygon = (polygon, points, size) => {
             collisionPoints.push(
               [x, y],
               [size + 4, size - 5],
-              [size + 3, size - 5],
-              [(size / 2) + 5, size - 5]
+              [size + 3, size - 5]
             )
             break;
           case 3:
@@ -216,6 +214,7 @@ const addCollisionPointsToPolygon = (polygon, points, size) => {
 
   collisionPoints.push(points[0])
   collisionPoints = collisionPoints.map(([x, y]) => centerPoint(type, [x, y, 0], size))
+  // collisionPoints = collisionPoints.map((collisionPoint) => collisionPoint.slice(0, -1))
 
   polygon.userData.originalPoints = collisionPoints
   polygon.userData.currentPoints = collisionPoints
