@@ -32,10 +32,10 @@ const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
 const tangram = new Tangram(20)
 const patternRef = tangram.mediumTriangle
 
-console.log(tangram.parallelogram.scale)
-console.log(tangram.parallelogram.userData.currentPoints[0])
-
-tangram.polygons.forEach((polygon) => scene.add(polygon))
+tangram.polygons.forEach((polygon, index) => {
+  polygon.userData.index = index
+  scene.add(polygon)
+})
 
 // Controls
 const orbitControls = new OrbitControls(camera, renderer.domElement)
@@ -51,11 +51,13 @@ const offset                 = new THREE.Vector2()
 const planeIntersectionPoint = new THREE.Vector2()
 const localIntersection      = new THREE.Vector2()
 
-let currentMovingPolygon
+let selectedPolygon
 
 canvas.addEventListener('dblclick', onDoubleClick)
 canvas.addEventListener('pointerdown', onPointerDown)
-canvas.addEventListener('pointerup', onPointerUp);
+canvas.addEventListener('pointerup', onPointerUp)
+document.addEventListener('keydown', onKeyDown)
+document.addEventListener('keydown', onKeyUp)
 
 document.getElementById('pattern-reveal').addEventListener('click', event => {
   console.log(JSON.stringify(revealPattern()))
@@ -76,24 +78,35 @@ function setPointer(x, y) {
   )
 }
 
+function setSelectedPolygon(polygon) {
+  selectedPolygon = polygon
+  selectedPolygon.children[0].material.color.setHex(0x000000)
+}
+
+function removeSelectedPolygon() {
+  selectedPolygon?.children[0]?.material?.color?.setHex(0xffffff)
+  selectedPolygon = null
+}
+
 function onDoubleClick(event) {
+  removeSelectedPolygon()
   setPointer(event.clientX, event.clientY)
 
   raycaster.setFromCamera(pointer, camera)
   const polygonIntersection = raycaster.intersectObjects(tangram.polygons)[0];
 
   if (polygonIntersection) {
-    const movingPolygon = polygonIntersection.object.parent
-    if (movingPolygon.userData.type == 'parallelogram') {
-      flipPolygon(movingPolygon)
-      movingPolygon.updateMatrixWorld()
-      updatePolygonPoints(movingPolygon)
-      checkCollisions(movingPolygon)
+    setSelectedPolygon(polygonIntersection.object.parent)
+    if (selectedPolygon.userData.type == 'parallelogram') {
+      flipPolygon(selectedPolygon)
+      updateSelectedPolygonPointsAndCheckCollisions()
     }
+    removeSelectedPolygon()
   }
 }
 
 function onPointerDown(event) {
+  removeSelectedPolygon()
   setPointer(event.clientX, event.clientY)
 
   raycaster.setFromCamera(pointer, camera)
@@ -104,14 +117,13 @@ function onPointerDown(event) {
 
     const movementType = polygonIntersection.object.userData.type == 'top' ? 'drag' : 'rotate'
 
-    currentMovingPolygon = polygonIntersection.object.parent
-    currentMovingPolygon.userData.movementType = movementType
-    currentMovingPolygon.userData.savedPosition = currentMovingPolygon.position.clone()
-    currentMovingPolygon.userData.savedRotation = currentMovingPolygon.rotation.z
+    setSelectedPolygon(polygonIntersection.object.parent)
+    selectedPolygon.userData.movementType = movementType
+    selectedPolygon.userData.savedRotation = selectedPolygon.rotation.z
 
-    offset.copy(polygonIntersection.point).sub(worldPosition.setFromMatrixPosition(currentMovingPolygon.matrixWorld));
+    offset.copy(polygonIntersection.point).sub(worldPosition.setFromMatrixPosition(selectedPolygon.matrixWorld));
 
-    currentMovingPolygon.position.z = 1
+    selectedPolygon.position.z = 1
 
     canvas.addEventListener('pointermove', onPointerMove)
   }
@@ -120,17 +132,16 @@ function onPointerDown(event) {
 function onPointerUp() {
   canvas.removeEventListener('pointermove', onPointerMove)
 
-  if (currentMovingPolygon) {
-    currentMovingPolygon.position.z = 0
+  if (selectedPolygon) {
+    selectedPolygon.position.z = 0
 
-    updatePolygonPoints(currentMovingPolygon)
-    checkCollisions()
+    updateSelectedPolygonPointsAndCheckCollisions()
 
     if (!tangram.polygons.some((polygon) => polygon.userData.isColliding)) {
       checkPattern()
     }
 
-    currentMovingPolygon = null
+    removeSelectedPolygon()
     orbitControls.enabled = true
   }
 }
@@ -141,29 +152,83 @@ function onPointerMove(event) {
   raycaster.setFromCamera(pointer, camera);
   raycaster.ray.intersectPlane(plane, planeIntersectionPoint);
 
-  if (currentMovingPolygon.userData.movementType == 'drag') {
+  if (selectedPolygon.userData.movementType == 'drag') {
     dragObject(planeIntersectionPoint)
   } else {
     rotateObject(planeIntersectionPoint)
   }
 }
 
+function onKeyDown(event) {
+  switch (event.key) {
+    case "n":
+      const currentSelectedPolygonIndex = selectedPolygon?.userData?.index || 0
+      const newSelectedPolygon = tangram.polygons.find((polygon) => polygon.userData.index === currentSelectedPolygonIndex + 1)
+      removeSelectedPolygon()
+      setSelectedPolygon(newSelectedPolygon || tangram.polygons[0])
+      break;
+    case "ArrowLeft":
+      if (selectedPolygon) {
+        selectedPolygon.position.x -= 0.5
+      }
+      break;
+    case "ArrowRight":
+      if (selectedPolygon) {
+        selectedPolygon.position.x += 0.5
+      }
+      break;
+    case "ArrowUp":
+      if (selectedPolygon) {
+        selectedPolygon.position.y += 0.5
+      }
+      break;
+    case "ArrowDown":
+      if (selectedPolygon) {
+        selectedPolygon.position.y -= 0.5
+      }
+      break;
+    case "r":
+      if (selectedPolygon) {
+        selectedPolygon.rotation.z += 0.1
+      }
+      break;
+    case "l":
+      if (selectedPolygon) {
+        selectedPolygon.rotation.z -= 0.1
+      }
+      break;
+  }
+}
+
+function onKeyUp() {
+  if (selectedPolygon) {
+    selectedPolygon.updateMatrixWorld()
+    updateSelectedPolygonPointsAndCheckCollisions()
+
+    if (!tangram.polygons.some((polygon) => polygon.userData.isColliding)) {
+      checkPattern()
+    }
+  }
+}
+
 function dragObject(planeIntersectionPoint) {
-  currentMovingPolygon.position.x = planeIntersectionPoint.x - offset.x
-  currentMovingPolygon.position.y = planeIntersectionPoint.y - offset.y
+  selectedPolygon.position.x = planeIntersectionPoint.x - offset.x
+  selectedPolygon.position.y = planeIntersectionPoint.y - offset.y
 }
 
 function rotateObject(planeIntersectionPoint) {
-  localIntersection.subVectors(planeIntersectionPoint, currentMovingPolygon.position)
-  currentMovingPolygon.rotation.z = currentMovingPolygon.userData.savedRotation + (localIntersection.angle() - offset.angle())
+  localIntersection.subVectors(planeIntersectionPoint, selectedPolygon.position)
+  selectedPolygon.rotation.z = selectedPolygon.userData.savedRotation + (localIntersection.angle() - offset.angle())
 }
 
-function updatePolygonPoints(polygon) {
-  polygon.userData.currentPoints = polygon.userData.originalPoints.map(([x, y]) => {
+function updateSelectedPolygonPointsAndCheckCollisions() {
+  selectedPolygon.userData.currentPoints = selectedPolygon.userData.originalPoints.map(([x, y]) => {
     coordinate.set(x, y)
-    polygon.localToWorld(coordinate)
+    selectedPolygon.localToWorld(coordinate)
     return [coordinate.x, coordinate.y]
   })
+  checkCollisions()
+  console.log(selectedPolygon.userData.currentPoints[0])
 }
 
 function checkCollisions() {
