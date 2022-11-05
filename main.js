@@ -80,13 +80,15 @@ function setPointer(x, y) {
 }
 
 function setSelectedPolygon(polygon) {
+  if (selectedPolygon) {
+    selectedPolygon.children[0].material.color.setHex(0xffffff)
+  }
+
   selectedPolygon = polygon
   selectedPolygon.children[0].material.color.setHex(0x000000)
 }
 
 function removeSelectedPolygon() {
-  if (!selectedPolygon) { return }
-
   selectedPolygon.children[0].material.color.setHex(0xffffff)
   selectedPolygon = null
 }
@@ -98,7 +100,6 @@ function onWindowResize() {
 }
 
 function onDoubleClick(event) {
-  // removeSelectedPolygon()
   setPointer(event.clientX, event.clientY)
 
   raycaster.setFromCamera(pointer, camera)
@@ -114,7 +115,6 @@ function onDoubleClick(event) {
 }
 
 function onPointerDown(event) {
-  removeSelectedPolygon()
   setPointer(event.clientX, event.clientY)
 
   raycaster.setFromCamera(pointer, camera)
@@ -132,6 +132,8 @@ function onPointerDown(event) {
     offset.copy(polygonIntersection.point).sub(worldPosition.setFromMatrixPosition(selectedPolygon.matrixWorld));
 
     canvas.addEventListener('pointermove', onPointerMove)
+  } else if (selectedPolygon) {
+    removeSelectedPolygon()
   }
 }
 
@@ -165,24 +167,20 @@ function onPointerMove(event) {
 function onKeyDown(event) {
   if (event.key === 'n') {
     const currentSelectedPolygonIndex = selectedPolygon?.userData?.index || 0
-    const newSelectedPolygon = tangram.polygons.find((polygon) => polygon.userData.index === currentSelectedPolygonIndex + 1)
-    removeSelectedPolygon()
-    setSelectedPolygon(newSelectedPolygon || tangram.polygons[0])
+    setSelectedPolygon(tangram.polygons[currentSelectedPolygonIndex + 1] || tangram.polygons[0])
   } else if (selectedPolygon) {
     switch (event.key) {
-      case "n":
-        break;
       case "ArrowLeft":
-        selectedPolygon.position.x -= 0.5
+        selectedPolygon.position.x -= 0.2
         break;
       case "ArrowRight":
-        selectedPolygon.position.x += 0.5
+        selectedPolygon.position.x += 0.2
         break;
       case "ArrowUp":
-        selectedPolygon.position.y += 0.5
+        selectedPolygon.position.y += 0.2
         break;
       case "ArrowDown":
-        selectedPolygon.position.y -= 0.5
+        selectedPolygon.position.y -= 0.2
         break;
       case "r":
         selectedPolygon.rotation.z += 0.1
@@ -194,6 +192,9 @@ function onKeyDown(event) {
         if (selectedPolygon.name == 'parallelogram') {
           flipPolygon(selectedPolygon)
         }
+        break;
+      case 'Escape':
+        removeSelectedPolygon(selectedPolygon)
         break;
     }
   }
