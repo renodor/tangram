@@ -53,11 +53,12 @@ const localIntersection      = new THREE.Vector2()
 
 let selectedPolygon
 
-canvas.addEventListener('dblclick', onDoubleClick)
+window.addEventListener('resize', onWindowResize)
 canvas.addEventListener('pointerdown', onPointerDown)
 canvas.addEventListener('pointerup', onPointerUp)
+canvas.addEventListener('dblclick', onDoubleClick)
 document.addEventListener('keydown', onKeyDown)
-document.addEventListener('keydown', onKeyUp)
+document.addEventListener('keyup', onKeyUp)
 
 document.getElementById('pattern-reveal').addEventListener('click', event => {
   console.log(JSON.stringify(revealPattern()))
@@ -84,12 +85,20 @@ function setSelectedPolygon(polygon) {
 }
 
 function removeSelectedPolygon() {
-  selectedPolygon?.children[0]?.material?.color?.setHex(0xffffff)
+  if (!selectedPolygon) { return }
+
+  selectedPolygon.children[0].material.color.setHex(0xffffff)
   selectedPolygon = null
 }
 
+function onWindowResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+}
+
 function onDoubleClick(event) {
-  removeSelectedPolygon()
+  // removeSelectedPolygon()
   setPointer(event.clientX, event.clientY)
 
   raycaster.setFromCamera(pointer, camera)
@@ -101,7 +110,6 @@ function onDoubleClick(event) {
       flipPolygon(selectedPolygon)
       updateSelectedPolygonPointsAndCheckCollisions()
     }
-    removeSelectedPolygon()
   }
 }
 
@@ -123,8 +131,6 @@ function onPointerDown(event) {
 
     offset.copy(polygonIntersection.point).sub(worldPosition.setFromMatrixPosition(selectedPolygon.matrixWorld));
 
-    selectedPolygon.position.z = 1
-
     canvas.addEventListener('pointermove', onPointerMove)
   }
 }
@@ -133,15 +139,12 @@ function onPointerUp() {
   canvas.removeEventListener('pointermove', onPointerMove)
 
   if (selectedPolygon) {
-    selectedPolygon.position.z = 0
-
     updateSelectedPolygonPointsAndCheckCollisions()
 
     if (!tangram.polygons.some((polygon) => polygon.userData.isColliding)) {
       checkPattern()
     }
 
-    removeSelectedPolygon()
     orbitControls.enabled = true
   }
 }
@@ -160,49 +163,44 @@ function onPointerMove(event) {
 }
 
 function onKeyDown(event) {
-  switch (event.key) {
-    case "n":
-      const currentSelectedPolygonIndex = selectedPolygon?.userData?.index || 0
-      const newSelectedPolygon = tangram.polygons.find((polygon) => polygon.userData.index === currentSelectedPolygonIndex + 1)
-      removeSelectedPolygon()
-      setSelectedPolygon(newSelectedPolygon || tangram.polygons[0])
-      break;
-    case "ArrowLeft":
-      if (selectedPolygon) {
+  if (event.key === 'n') {
+    const currentSelectedPolygonIndex = selectedPolygon?.userData?.index || 0
+    const newSelectedPolygon = tangram.polygons.find((polygon) => polygon.userData.index === currentSelectedPolygonIndex + 1)
+    removeSelectedPolygon()
+    setSelectedPolygon(newSelectedPolygon || tangram.polygons[0])
+  } else if (selectedPolygon) {
+    switch (event.key) {
+      case "n":
+        break;
+      case "ArrowLeft":
         selectedPolygon.position.x -= 0.5
-      }
-      break;
-    case "ArrowRight":
-      if (selectedPolygon) {
+        break;
+      case "ArrowRight":
         selectedPolygon.position.x += 0.5
-      }
-      break;
-    case "ArrowUp":
-      if (selectedPolygon) {
+        break;
+      case "ArrowUp":
         selectedPolygon.position.y += 0.5
-      }
-      break;
-    case "ArrowDown":
-      if (selectedPolygon) {
+        break;
+      case "ArrowDown":
         selectedPolygon.position.y -= 0.5
-      }
-      break;
-    case "r":
-      if (selectedPolygon) {
+        break;
+      case "r":
         selectedPolygon.rotation.z += 0.1
-      }
-      break;
-    case "l":
-      if (selectedPolygon) {
+        break;
+      case "l":
         selectedPolygon.rotation.z -= 0.1
-      }
-      break;
+        break;
+      case "f":
+        if (selectedPolygon.name == 'parallelogram') {
+          flipPolygon(selectedPolygon)
+        }
+        break;
+    }
   }
 }
 
 function onKeyUp() {
   if (selectedPolygon) {
-    selectedPolygon.updateMatrixWorld()
     updateSelectedPolygonPointsAndCheckCollisions()
 
     if (!tangram.polygons.some((polygon) => polygon.userData.isColliding)) {
@@ -222,13 +220,13 @@ function rotateObject(planeIntersectionPoint) {
 }
 
 function updateSelectedPolygonPointsAndCheckCollisions() {
+  selectedPolygon.updateMatrixWorld()
   selectedPolygon.userData.currentPoints = selectedPolygon.userData.originalPoints.map(([x, y]) => {
     coordinate.set(x, y)
     selectedPolygon.localToWorld(coordinate)
     return [coordinate.x, coordinate.y]
   })
   checkCollisions()
-  console.log(selectedPolygon.userData.currentPoints[0])
 }
 
 function checkCollisions() {
