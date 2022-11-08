@@ -1,0 +1,62 @@
+ #game {
+  canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+  }
+
+  button {
+    position: absolute;
+  }
+
+  #patterns-menu {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transition: bottom .5s ease;
+    &.hidden {
+      bottom: -98px;
+    }
+    #current-pattern {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      .pattern {
+        background-color: white;
+        padding: 30px;
+        margin: 10px 10px 0 10px;
+      }
+    }
+    #hide-pattern-menu {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      cursor: pointer;
+      span {
+        background-color: white;
+      }
+    }
+    #patterns {
+      margin: 0 50px 10px 50px;
+      padding: 10px;
+      background-color: white;
+      display: flex;
+      column-gap: 10px;
+      justify-content: space-between;
+      overflow-x: auto;
+      .pattern {
+        padding: 20px;
+        border: 1px solid white;
+        cursor: pointer;
+        &:hover {
+          background-color: #eee;
+        }
+        &.current {
+          border: 1px solid black
+        }
+      }
+    }
+  }
+ }
