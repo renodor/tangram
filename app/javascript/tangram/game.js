@@ -50,7 +50,11 @@ const initAndPlay = (canvas) => {
   const localIntersection = new THREE.Vector2()
 
   let selectedPolygon
-  let currentPatternId
+  const currentPattern = {
+    id: 0,
+    name: '',
+    polygons: []
+  }
 
   window.addEventListener('resize', onWindowResize)
   canvas.addEventListener('pointerdown', onPointerDown)
@@ -283,45 +287,53 @@ const initAndPlay = (canvas) => {
 
   function checkPattern() {
     const newPatternId = document.getElementById('current-pattern').dataset.id
-    if (newPatternId != currentPatternId) {
-      currentPatternId = newPatternId
-      fetch(`/patterns/${currentPatternId}`, { headers: { 'accept': 'application/json' } })
-      console.log('fetch new pattern points')
-    }
-    for (const [key, value] of Object.entries(patterns)) {
-      const polygonsMatchPattern = tangram.polygons.every((polygon) => {
-        if (polygon == patternRef) { return true }
-
-        return polygonVerticesToPatternRefLocal(polygon).every(([polygonX, polygonY], index) => {
-          if (polygon.userData.duplicated) {
-            return value[polygon.name].some((patternPoints) => {
-              const xDiff = Math.abs(polygonX - patternPoints[index][0])
-              const yDiff = Math.abs(polygonY - patternPoints[index][1])
-              return (xDiff <= 2) && (yDiff <= 2)
-            })
-          } else {
-            return value[polygon.name].some(([patternX, patternY]) => {
-              const xDiff = Math.abs(polygonX - patternX)
-              const yDiff = Math.abs(polygonY - patternY)
-
-              // console.log({
-              //   xDiff: xDiff,
-              //   yDiff: yDiff,
-              //   polygonX: polygonX,
-              //   polygonY: polygonY,
-              //   patternX: patternX,
-              //   patternY: value[polygon.name][index][1],
-              //   result: (xDiff <= 2) && (yDiff <= 2)
-              // })
-              return (xDiff <= 2) && (yDiff <= 2)
-            })
-
-          }
+    if (newPatternId != currentPattern.id) {
+      fetch(`/patterns/${newPatternId}`, { headers: { 'accept': 'application/json' } })
+        .then((response) => response.json())
+        .then(({id, name, polygons}) => {
+          currentPattern.id = id
+          currentPattern.polygons = polygons
+          currentPattern.name = name
+          comparePolygonsWitCurrentPatternPolygons()
         })
-      })
-
-      if (polygonsMatchPattern) { console.log(`Bravo you found "${key.toUpperCase()}" pattern!`) }
+    } else {
+      comparePolygonsWitCurrentPatternPolygons()
     }
+  }
+
+  function comparePolygonsWitCurrentPatternPolygons() {
+    const polygonsMatchPattern = tangram.polygons.every((polygon) => {
+      if (polygon == patternRef) { return true }
+
+      return polygonVerticesToPatternRefLocal(polygon).every(([polygonX, polygonY], index) => {
+        if (polygon.userData.duplicated) {
+          return currentPattern.polygons[polygon.name].some((patternPoints) => {
+            const xDiff = Math.abs(polygonX - patternPoints[index][0])
+            const yDiff = Math.abs(polygonY - patternPoints[index][1])
+            return (xDiff <= 2) && (yDiff <= 2)
+          })
+        } else {
+          return currentPattern.polygons[polygon.name].some(([patternX, patternY]) => {
+            const xDiff = Math.abs(polygonX - patternX)
+            const yDiff = Math.abs(polygonY - patternY)
+
+            // console.log({
+            //   xDiff: xDiff,
+            //   yDiff: yDiff,
+            //   polygonX: polygonX,
+            //   polygonY: polygonY,
+            //   patternX: patternX,
+            //   patternY: currentPattern.polygons[polygon.name][index][1],
+            //   result: (xDiff <= 2) && (yDiff <= 2)
+            // })
+            return (xDiff <= 2) && (yDiff <= 2)
+          })
+
+        }
+      })
+    })
+
+    if (polygonsMatchPattern) { console.log(`Bravo you found "${currentPattern.name.toUpperCase()}" pattern!`) }
   }
 
   function roundAtTwoDecimal(num) {

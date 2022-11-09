@@ -2,11 +2,6 @@ import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
   static targets = ["pattern", "currentPattern"]
-
-  connect() {
-    console.log(this.hideMenuTarget)
-  }
-
   toggle() {
     this.element.classList.toggle('hidden')
   }
