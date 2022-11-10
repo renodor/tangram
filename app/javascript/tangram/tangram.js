@@ -49,11 +49,11 @@ export default class Tangram {
     return [
       this.cube,
       this.bigTriangle1,
-      this.bigTriangle2,
-      this.mediumTriangle,
-      this.smallTriangle1,
-      this.smallTriangle2,
-      this.parallelogram
+      // this.bigTriangle2,
+      // this.mediumTriangle,
+      // this.smallTriangle1,
+      // this.smallTriangle2,
+      // this.parallelogram
     ]
   }
 }

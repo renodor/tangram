@@ -11,7 +11,7 @@ export default ({ type, size, name, duplicated }) => {
   // TOP
   const topShape = shape.clone()
   const topGeometry = new THREE.ShapeGeometry(topShape)
-  const topMaterial = new THREE.MeshBasicMaterial({ color: 0xeeeeeee })
+  const topMaterial = new THREE.MeshLambertMaterial({ color: 0x6CB2B4, transparent: true })
   const topMesh = new THREE.Mesh(topGeometry, topMaterial)
   topMesh.scale.set(0.75, 0.75, 0.75)
   topMesh.userData.type = 'top'
@@ -19,9 +19,16 @@ export default ({ type, size, name, duplicated }) => {
 
   // MAIN
   const mainGeometry = new THREE.ExtrudeGeometry(shape, { depth: 1, bevelEnabled: false });
-  const mainMaterial = new THREE.MeshBasicMaterial({ color: 0xfff1111, wireframe: false })
+  const mainMaterial = new THREE.MeshLambertMaterial({ color: 0x6CB2B4, transparent: true })
   const mainMesh = new THREE.Mesh(mainGeometry, mainMaterial)
   mainMesh.userData.type = 'main'
+  mainMesh.castShadow = true;
+
+  // OUTLINE
+  // const outlineMaterial1 = new THREE.MeshBasicMaterial({ color: 'green', side: THREE.BackSide });
+  // const outlineMesh1 = new THREE.Mesh(mainGeometry, outlineMaterial1);
+  // // outlineMesh1.position = mainMesh.position;
+  // outlineMesh1.scale.multiplyScalar(1.05);
 
   // POLYGON
   const polygon = new THREE.Group()
@@ -30,6 +37,8 @@ export default ({ type, size, name, duplicated }) => {
   polygon.name = name
   polygon.add(topMesh)
   polygon.add(mainMesh)
+  // polygon.position.z += 5
+  // polygon.add(outlineMesh1)
 
   centerPolygon(polygon, size)
   addCollisionPointsToPolygon(polygon, points, size)
