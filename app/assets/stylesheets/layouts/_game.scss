@@ -26,6 +26,9 @@
         background-color: white;
         padding: 30px;
         margin: 10px 10px 0 10px;
+        &.solved {
+          color: green
+        }
       }
     }
     #hide-pattern-menu {
@@ -55,6 +58,9 @@
         }
         &.current {
           border: 1px solid black
+        }
+        &[data-solved=true] {
+          color: green
         }
       }
     }

@@ -7,7 +7,7 @@
 
   <div id="patterns-menu" data-controller="patterns-menu">
     <div id="current-pattern" data-patterns-menu-target="currentPattern" data-id="<%= @current_pattern.id %>">
-      <div class="pattern">
+      <div class="pattern <%= 'solved' if @solved_patterns.include?(@current_pattern) %>">
         <%= @current_pattern.name %>
       </div>
     </div>
@@ -23,6 +23,7 @@
           data-id="<%= pattern.id %>"
           data-name="<%= pattern.name %>"
           data-action="click->patterns-menu#selectPattern"
+          data-solved="<%= @solved_patterns.include?(pattern) %>"
           data-patterns-menu-target="pattern"
         >
           <%= pattern.name %>

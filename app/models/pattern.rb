@@ -2,6 +2,8 @@
 
 class Pattern < ApplicationRecord
   has_many :polygons
+  has_many :solved_patterns
+  has_many :users, through: :solved_patterns
 
   validates :name, presence: true
 

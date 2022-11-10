@@ -1,7 +1,6 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'three-orbit-controls';
+// import { OrbitControls } from 'three-orbit-controls';
 import Tangram from './tangram.js'
-import patterns from './patterns.json' assert { type: 'json' };
 
 const initAndPlay = (canvas) => {
   // INIT
@@ -34,9 +33,9 @@ const initAndPlay = (canvas) => {
   })
 
   // Controls
-  const orbitControls = new OrbitControls(camera, renderer.domElement)
-  orbitControls.enableRotate = false
-  orbitControls.mouseButtons['LEFT'] = THREE.MOUSE.PAN
+  // const orbitControls = new OrbitControls(camera, renderer.domElement)
+  // orbitControls.enableRotate = false
+  // orbitControls.mouseButtons['LEFT'] = THREE.MOUSE.PAN
 
   // Collision
   const coordinate = new THREE.Vector3()
@@ -71,7 +70,7 @@ const initAndPlay = (canvas) => {
 
   function animate() {
     requestAnimationFrame(animate)
-    orbitControls.update()
+    // orbitControls.update()
     renderer.render(scene, camera)
   }
 
@@ -124,7 +123,7 @@ const initAndPlay = (canvas) => {
     const polygonIntersection = raycaster.intersectObjects(tangram.polygons)[0];
 
     if (polygonIntersection) {
-      orbitControls.enabled = false
+      // orbitControls.enabled = false
 
       const movementType = polygonIntersection.object.userData.type == 'top' ? 'drag' : 'rotate'
 
@@ -150,7 +149,7 @@ const initAndPlay = (canvas) => {
         checkPattern()
       }
 
-      orbitControls.enabled = true
+      // orbitControls.enabled = true
     }
   }
 
@@ -333,7 +332,20 @@ const initAndPlay = (canvas) => {
       })
     })
 
-    if (polygonsMatchPattern) { console.log(`Bravo you found "${currentPattern.name.toUpperCase()}" pattern!`) }
+    if (polygonsMatchPattern) {
+      console.log(`Bravo you found "${currentPattern.name.toUpperCase()}" pattern!`)
+      fetch(
+        `/solved_patterns`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ pattern_id: currentPattern.id })
+        }
+      )
+
+      document.querySelector('#current-pattern .pattern').classList.add('solved')
+      document.querySelector('#patterns .pattern.current').dataset.solved = true
+    }
   }
 
   function roundAtTwoDecimal(num) {
