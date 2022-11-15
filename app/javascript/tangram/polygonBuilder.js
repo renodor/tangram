@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export default ({ type, size, name, duplicated }) => {
+export default ({ type, size, name, lightColor, darkColor, duplicated }) => {
   // const hypotenuse = size * Math.sqrt(2)
 
   // SHAPE
@@ -11,15 +11,16 @@ export default ({ type, size, name, duplicated }) => {
   // TOP
   const topShape = shape.clone()
   const topGeometry = new THREE.ShapeGeometry(topShape)
-  const topMaterial = new THREE.MeshLambertMaterial({ color: 0x6CB2B4, transparent: true })
+  const topMaterial = new THREE.MeshLambertMaterial({ color: lightColor, transparent: true })
+  topMaterial.opacity = 0
   const topMesh = new THREE.Mesh(topGeometry, topMaterial)
-  topMesh.scale.set(0.75, 0.75, 0.75)
+  topMesh.scale.set(0.60, 0.60, 0.60)
   topMesh.userData.type = 'top'
-  topMesh.position.z = 1.01
+  topMesh.position.z = 0.101
 
   // MAIN
-  const mainGeometry = new THREE.ExtrudeGeometry(shape, { depth: 1, bevelEnabled: false });
-  const mainMaterial = new THREE.MeshLambertMaterial({ color: 0x6CB2B4, transparent: true })
+  const mainGeometry = new THREE.ExtrudeGeometry(shape, { depth: 0.1, bevelEnabled: false });
+  const mainMaterial = new THREE.MeshLambertMaterial({ color: lightColor, transparent: true })
   const mainMesh = new THREE.Mesh(mainGeometry, mainMaterial)
   mainMesh.userData.type = 'main'
   mainMesh.castShadow = true;
@@ -32,8 +33,12 @@ export default ({ type, size, name, duplicated }) => {
 
   // POLYGON
   const polygon = new THREE.Group()
-  polygon.userData.type = type
-  polygon.userData.duplicated = duplicated
+  polygon.userData = {
+    type: type,
+    duplicated: duplicated,
+    lightColor: lightColor,
+    darkColor: darkColor
+  }
   polygon.name = name
   polygon.add(topMesh)
   polygon.add(mainMesh)
@@ -74,11 +79,12 @@ const buildPoints = (type, size) => {
         [0, size]
       ]
     case 'parallelogram':
+      console.log(5 == size / 2)
       return [
         [0, 0],
         [size, 0],
-        [size + 5, size - 5],
-        [0 + 5, size - 5]
+        [size + (size / 2), size - (size / 2)],
+        [0 + (size / 2), size - (size / 2)]
       ]
   }
 }

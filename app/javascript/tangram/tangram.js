@@ -10,11 +10,11 @@ export default class Tangram {
   constructor(unit) {
     this.unit = unit;
     this.cube = this.buildCube()
-    this.bigTriangle1 = this.buildTriangle('bigTriangle', this.unit, true)
-    this.bigTriangle2 = this.buildTriangle('bigTriangle', this.unit, true)
-    this.mediumTriangle = this.buildTriangle('mediumTriangle', this.unit * Math.sqrt(2) / 2, false)
-    this.smallTriangle1 = this.buildTriangle('smallTriangle', this.unit / 2, true)
-    this.smallTriangle2 = this.buildTriangle('smallTriangle', this.unit / 2, true)
+    this.bigTriangle1 = this.buildTriangle('bigTriangle', this.unit, 0x2f4e54, 0x223D42, true)
+    this.bigTriangle2 = this.buildTriangle('bigTriangle', this.unit, 0x2f4e54, 0x223D42, true)
+    this.mediumTriangle = this.buildTriangle('mediumTriangle', this.unit * Math.sqrt(2) / 2, 0xB8D8D8, 0xabc6c6, false)
+    this.smallTriangle1 = this.buildTriangle('smallTriangle', this.unit / 2, 0x7A9E9F, 0x6a8989, true)
+    this.smallTriangle2 = this.buildTriangle('smallTriangle', this.unit / 2, 0x7A9E9F, 0x6a8989, true)
     this.parallelogram = this.buildParallelogram()
   }
 
@@ -23,15 +23,19 @@ export default class Tangram {
       type: 'cube',
       name: 'cube',
       size: this.unit * Math.sqrt(2) / 4,
+      lightColor: 0xA07178,
+      darkColor: 0x7c585e,
       duplicated: false
     })
   }
 
-  buildTriangle(name, size, duplicated) {
+  buildTriangle(name, size, lightColor, darkColor, duplicated) {
     return polygonBuilder({
       type: 'triangle',
       name: name,
       size: size,
+      lightColor: lightColor,
+      darkColor: darkColor,
       duplicated: duplicated
     })
   }
@@ -41,6 +45,8 @@ export default class Tangram {
       type: 'parallelogram',
       name: 'parallelogram',
       size: this.unit / 2,
+      lightColor: 0xF7E8A4,
+      darkColor: 0xd8cb91,
       duplicated: false
     })
   }
@@ -49,11 +55,11 @@ export default class Tangram {
     return [
       this.cube,
       this.bigTriangle1,
-      // this.bigTriangle2,
-      // this.mediumTriangle,
-      // this.smallTriangle1,
-      // this.smallTriangle2,
-      // this.parallelogram
+      this.bigTriangle2,
+      this.mediumTriangle,
+      this.smallTriangle1,
+      this.smallTriangle2,
+      this.parallelogram
     ]
   }
 }

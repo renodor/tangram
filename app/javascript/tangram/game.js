@@ -4,57 +4,25 @@ import Tangram from './tangram.js'
 
 const initAndPlay = (canvas) => {
   // INIT
+  // const darkColor = 0x5aaaa5
+  // const lightColor = 0x69bfbc
+  // const backgroundColor = 0xF3EADD
+
   const scene = new THREE.Scene()
-  const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.1, 100)
+  const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 100)
   const renderer = new THREE.WebGLRenderer({ antialias: true, canvas: canvas })
 
-  // scene.background = new THREE.Color(0xf3eadd)
   renderer.setPixelRatio(window.devicePixelRatio)
   renderer.setSize(window.innerWidth, window.innerHeight)
-  // renderer.shadowMap.enabled = true;
   camera.position.z = 50
 
-  // Create ambient light and add to scene.
-  const hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.6);
-  hemiLight.color.setHSL(0.6, 1, 0.6);
-  hemiLight.groundColor.setHSL(0.095, 1, 0.75);
-  hemiLight.position.set(0, 50, 0);
-  scene.add(hemiLight);
+  // LIGHTS
+  const directionalLight = new THREE.DirectionalLight()
+  directionalLight.position.set(15, 0, 25)
+  scene.add(directionalLight)
 
-  const hemiLightHelper = new THREE.HemisphereLightHelper(hemiLight, 10);
-  scene.add(hemiLightHelper);
-
-  const directionalLight = new THREE.DirectionalLight();
-  // directionalLight.color.setHSL(0.1, 1, 0.95);
-  directionalLight.position.set(15, 0, 25);
-  // directionalLight.position.multiplyScalar(10);
-  scene.add(directionalLight);
-
-  directionalLight.castShadow = true;
-
-  directionalLight.shadow.mapSize.width = 2048;
-  directionalLight.shadow.mapSize.height = 2048;
-
-  const d = 50;
-
-  directionalLight.shadow.camera.left = - d;
-  directionalLight.shadow.camera.right = d;
-  directionalLight.shadow.camera.top = d;
-  directionalLight.shadow.camera.bottom = - d;
-
-  directionalLight.shadow.camera.far = 3500;
-  directionalLight.shadow.bias = - 0.0001;
-  const lightHelper = new THREE.DirectionalLightHelper(directionalLight, 10);
-
-  scene.add(lightHelper)
-
-  // const pointLight = new THREE.PointLight(0xffffff, 1, 100);
-  // pointLight.position.set(0, 0, 10);
-  // scene.add(pointLight);
-
-  // const sphereSize = 1;
-  // const pointLightHelper = new THREE.PointLightHelper(pointLight, sphereSize);
-  // scene.add(pointLightHelper);
+  // const ambiantLight = new THREE.AmbientLight(0x404040)
+  // scene.add(ambiantLight)
 
   // HELPERS
   // const grid = new THREE.GridHelper(100, 100);
@@ -68,12 +36,12 @@ const initAndPlay = (canvas) => {
   // PLANE
   const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
   const planeGeometry = new THREE.PlaneGeometry(window.innerWidth, window.innerHeight);
-  const planeMaterial = new THREE.MeshLambertMaterial({ color: 0xf3eadd });
+  const planeMaterial = new THREE.MeshBasicMaterial({ color: 0xd7e6e8 });
   const planeMesh = new THREE.Mesh(planeGeometry, planeMaterial);
   planeMesh.receiveShadow = true
   scene.add(planeMesh);
 
-  const tangram = new Tangram(20)
+  const tangram = new Tangram(40)
   const patternRef = tangram.mediumTriangle
 
   tangram.polygons.forEach((polygon, index) => {
@@ -82,7 +50,7 @@ const initAndPlay = (canvas) => {
   })
 
   // Controls
-  const orbitControls = new OrbitControls(camera, renderer.domElement)
+  // const orbitControls = new OrbitControls(camera, renderer.domElement)
   // orbitControls.enableRotate = false
   // orbitControls.mouseButtons['LEFT'] = THREE.MOUSE.PAN
 
@@ -119,28 +87,30 @@ const initAndPlay = (canvas) => {
 
   function animate() {
     requestAnimationFrame(animate)
-    orbitControls.update()
+    // orbitControls.update()
     renderer.render(scene, camera)
   }
 
   function setPointer(x, y) {
     pointer.set(
-      (x / canvas.width) * 2 - 1,
-      - (y / canvas.height) * 2 + 1
+      (x / window.innerWidth) * 2 - 1,
+      - (y / window.innerHeight) * 2 + 1
     )
   }
 
   function setSelectedPolygon(polygon) {
-    if (selectedPolygon) {
-      selectedPolygon.children.forEach((child) => child.material.color.setHex(0x6CB2B4))
-    }
+    if (selectedPolygon) { removeSelectedPolygon() }
 
     selectedPolygon = polygon
-    selectedPolygon.children.forEach((child) => child.material.color.setHex(0x3E8f91))
+    findMain(selectedPolygon).material.color.setHex(selectedPolygon.userData.darkColor)
+    findTop(selectedPolygon).material.opacity = 0.5
+    selectedPolygon.position.z = 0.1
   }
 
   function removeSelectedPolygon() {
-    selectedPolygon.children.forEach((child) => child.material.color.setHex(0x6CB2B4))
+    selectedPolygon.position.z = 0
+    findTop(selectedPolygon).material.opacity = 0
+    findMain(selectedPolygon).material.color.setHex(selectedPolygon.userData.lightColor)
     selectedPolygon = null
   }
 
@@ -172,7 +142,7 @@ const initAndPlay = (canvas) => {
     const polygonIntersection = raycaster.intersectObjects(tangram.polygons)[0];
 
     if (polygonIntersection) {
-      orbitControls.enabled = false
+      // orbitControls.enabled = false
 
       const movementType = polygonIntersection.object.userData.type == 'top' ? 'drag' : 'rotate'
 
@@ -192,13 +162,14 @@ const initAndPlay = (canvas) => {
     canvas.removeEventListener('pointermove', onPointerMove)
 
     if (selectedPolygon) {
+      selectedPolygon.position.z = 0
       updateSelectedPolygonPointsAndCheckCollisions()
 
       if (!tangram.polygons.some((polygon) => polygon.userData.isColliding)) {
         checkPattern()
       }
 
-      orbitControls.enabled = true
+      // orbitControls.enabled = true
     }
   }
 
@@ -299,13 +270,15 @@ const initAndPlay = (canvas) => {
 
   function addCollisionToPolygon(polygon) {
     polygon.userData.isColliding = true
-    polygon.children.forEach((child) => child.material.opacity = 0.5)
+    findMain(polygon).material.opacity = 0.5
+    // findTop(polygon).material.opacity = 0
+    // polygon.children.forEach((child) => child.material.opacity = 0.5)
     // polygon.children[1].material.color.setHex(0x808080)
   }
 
   function removeCollisionToPolygon(polygon) {
     polygon.userData.isColliding = false
-    polygon.children.forEach((child) => child.material.opacity = 1)
+    findMain(polygon).material.opacity = 1
   }
 
   function pointIsWithinPolygon(polygonPoints, x, y) {
@@ -422,6 +395,14 @@ const initAndPlay = (canvas) => {
 
   function flipPolygon(polygon) {
     polygon.scale.x *= -1
+  }
+
+  function findTop(polygon) {
+    return polygon.children.find((child) => child.userData.type == 'top')
+  }
+
+  function findMain(polygon) {
+    return polygon.children.find((child) => child.userData.type == 'main')
   }
 }
 
