@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export default ({ type, size, name, lightColor, darkColor, duplicated }) => {
+export default ({ type, size, name, lightColor, darkColor, textureFile, duplicated }) => {
   // const hypotenuse = size * Math.sqrt(2)
 
   // SHAPE
@@ -20,7 +20,16 @@ export default ({ type, size, name, lightColor, darkColor, duplicated }) => {
 
   // MAIN
   const mainGeometry = new THREE.ExtrudeGeometry(shape, { depth: 0.1, bevelEnabled: false });
-  const mainMaterial = new THREE.MeshLambertMaterial({ color: lightColor, transparent: true })
+  let mainMaterial
+  if (textureFile) {
+    const texture = new THREE.TextureLoader().load(`/assets/${textureFile}.jpg`);
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(0.05, 0.05);
+    mainMaterial = new THREE.MeshLambertMaterial({ color: lightColor, transparent: true, map: texture })
+  } else {
+    mainMaterial = new THREE.MeshLambertMaterial({ color: lightColor, transparent: true })
+  }
   const mainMesh = new THREE.Mesh(mainGeometry, mainMaterial)
   mainMesh.userData.type = 'main'
   mainMesh.castShadow = true;
@@ -79,7 +88,6 @@ const buildPoints = (type, size) => {
         [0, size]
       ]
     case 'parallelogram':
-      console.log(5 == size / 2)
       return [
         [0, 0],
         [size, 0],

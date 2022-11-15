@@ -41,7 +41,7 @@ const initAndPlay = (canvas) => {
   planeMesh.receiveShadow = true
   scene.add(planeMesh);
 
-  const tangram = new Tangram(40)
+  const tangram = new Tangram(20)
   const patternRef = tangram.mediumTriangle
 
   tangram.polygons.forEach((polygon, index) => {
