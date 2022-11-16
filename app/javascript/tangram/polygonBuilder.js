@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export default ({ type, size, name, lightColor, darkColor, textureFile, duplicated }) => {
+export default ({ type, size, name, lightColor, darkColor, textureRepetition, duplicated }) => {
   // const hypotenuse = size * Math.sqrt(2)
 
   // SHAPE
@@ -20,25 +20,28 @@ export default ({ type, size, name, lightColor, darkColor, textureFile, duplicat
 
   // MAIN
   const mainGeometry = new THREE.ExtrudeGeometry(shape, { depth: 0.1, bevelEnabled: false });
-  let mainMaterial
-  if (textureFile) {
-    const texture = new THREE.TextureLoader().load(`/assets/${textureFile}.jpg`);
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set(0.05, 0.05);
-    mainMaterial = new THREE.MeshLambertMaterial({ color: lightColor, transparent: true, map: texture })
-  } else {
-    mainMaterial = new THREE.MeshLambertMaterial({ color: lightColor, transparent: true })
-  }
+  const texture = new THREE.TextureLoader().load(`/assets/textures/${name}.jpg`);
+  texture.wrapS = THREE.RepeatWrapping;
+  texture.wrapT = THREE.RepeatWrapping;
+  texture.repeat.set(textureRepetition, textureRepetition);
+  const mainMaterial = new THREE.MeshLambertMaterial({ color: lightColor, transparent: true, alphaMap: texture })
   const mainMesh = new THREE.Mesh(mainGeometry, mainMaterial)
   mainMesh.userData.type = 'main'
   mainMesh.castShadow = true;
 
   // OUTLINE
-  // const outlineMaterial1 = new THREE.MeshBasicMaterial({ color: 'green', side: THREE.BackSide });
-  // const outlineMesh1 = new THREE.Mesh(mainGeometry, outlineMaterial1);
-  // // outlineMesh1.position = mainMesh.position;
-  // outlineMesh1.scale.multiplyScalar(1.05);
+  const lineMaterial = new THREE.LineDashedMaterial({ color: 0xffffff, linewidth: 10, dashSize: 0.5, gapSize: 0.2 });
+  // const linePoints = [];
+  // linePoints.push(new THREE.Vector3(- 10, 0, 0));
+  // linePoints.push(new THREE.Vector3(0, 10, 0));
+  // linePoints.push(new THREE.Vector3(10, 0, 0));
+
+  const linePoints = points.map(([x, y]) => new THREE.Vector3(x, y, 0))
+  linePoints.push(new THREE.Vector3(points[0][0], points[0][1], 0))
+  const lineGeometry = new THREE.BufferGeometry().setFromPoints(linePoints);
+  // const lineGeometry = new THREE.ShapeGeometry(shape)
+  const line = new THREE.Line(lineGeometry, lineMaterial);
+  line.computeLineDistances()
 
   // POLYGON
   const polygon = new THREE.Group()
@@ -52,7 +55,7 @@ export default ({ type, size, name, lightColor, darkColor, textureFile, duplicat
   polygon.add(topMesh)
   polygon.add(mainMesh)
   // polygon.position.z += 5
-  // polygon.add(outlineMesh1)
+  // polygon.add(line)
 
   centerPolygon(polygon, size)
   addCollisionPointsToPolygon(polygon, points, size)

@@ -83,6 +83,13 @@ const initAndPlay = (canvas) => {
     console.log(JSON.stringify(revealPattern()))
   });
 
+  // tangram.bigTriangle1.position.set(-20, 0)
+  // tangram.bigTriangle2.position.set(-20, 12)
+  // tangram.smallTriangle1.position.set(15, 10)
+  // tangram.smallTriangle2.position.set(15, 0)
+  // tangram.mediumTriangle.position.set(0, 10)
+  // tangram.parallelogram.position.set(0, -8)
+
   animate();
 
   function animate() {
@@ -102,8 +109,10 @@ const initAndPlay = (canvas) => {
     if (selectedPolygon) { removeSelectedPolygon() }
 
     selectedPolygon = polygon
-    findMain(selectedPolygon).material.color.setHex(selectedPolygon.userData.darkColor)
-    findTop(selectedPolygon).material.opacity = 0.5
+    // findMain(selectedPolygon).material.color.setHex(selectedPolygon.userData.darkColor)
+    const topMaterial = findTop(selectedPolygon).material
+    topMaterial.opacity = 0.85
+    topMaterial.color.setHex(selectedPolygon.userData.darkColor)
     selectedPolygon.position.z = 0.1
   }
 
