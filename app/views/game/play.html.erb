@@ -26,6 +26,7 @@
           data-solved="<%= @solved_patterns.include?(pattern) %>"
           data-patterns-menu-target="pattern"
         >
+          <%= svg "patterns/square.svg", 'svg-pattern' %>
           <%= pattern.name %>
         </div>
       <% end %>

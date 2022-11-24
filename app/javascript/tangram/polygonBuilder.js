@@ -11,7 +11,7 @@ export default ({ type, size, name, lightColor, darkColor, textureRepetition, du
   // TOP
   const topShape = shape.clone()
   const topGeometry = new THREE.ShapeGeometry(topShape)
-  const topMaterial = new THREE.MeshLambertMaterial({ color: lightColor, transparent: true })
+  const topMaterial = new THREE.MeshLambertMaterial({ color: darkColor, transparent: true })
   topMaterial.opacity = 0
   const topMesh = new THREE.Mesh(topGeometry, topMaterial)
   topMesh.scale.set(0.60, 0.60, 0.60)
@@ -48,8 +48,6 @@ export default ({ type, size, name, lightColor, darkColor, textureRepetition, du
   polygon.userData = {
     type: type,
     duplicated: duplicated,
-    lightColor: lightColor,
-    darkColor: darkColor
   }
   polygon.name = name
   polygon.add(topMesh)

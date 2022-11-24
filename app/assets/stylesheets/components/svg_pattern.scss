@@ -1,0 +1,18 @@
+.svg-pattern {
+  polygon, path, rect {
+    fill: white;
+  }
+  &.solved {
+    polygon, path, rect {
+      fill: black;
+    }
+  }
+  &.revealed {
+    polygon, rect {
+      fill: white;
+    }
+    .stroke {
+      fill: black;
+    }
+  }
+}

@@ -109,17 +109,13 @@ const initAndPlay = (canvas) => {
     if (selectedPolygon) { removeSelectedPolygon() }
 
     selectedPolygon = polygon
-    // findMain(selectedPolygon).material.color.setHex(selectedPolygon.userData.darkColor)
-    const topMaterial = findTop(selectedPolygon).material
-    topMaterial.opacity = 0.85
-    topMaterial.color.setHex(selectedPolygon.userData.darkColor)
+    findTop(selectedPolygon).material.opacity = 0.85
     selectedPolygon.position.z = 0.1
   }
 
   function removeSelectedPolygon() {
     selectedPolygon.position.z = 0
     findTop(selectedPolygon).material.opacity = 0
-    findMain(selectedPolygon).material.color.setHex(selectedPolygon.userData.lightColor)
     selectedPolygon = null
   }
 
