@@ -6,6 +6,5 @@ class GameController < ApplicationController
   def play
     @patterns = Pattern.all
     @current_pattern = @patterns.sample
-    @solved_patterns = current_user.patterns
   end
 end

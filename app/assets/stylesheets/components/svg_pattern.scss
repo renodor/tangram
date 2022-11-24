@@ -1,18 +1,11 @@
 .svg-pattern {
-  polygon, path, rect {
-    fill: white;
-  }
+  width: 70px;
+  height: 70px;
   &.solved {
-    polygon, path, rect {
-      fill: black;
-    }
-  }
-  &.revealed {
-    polygon, rect {
-      fill: white;
-    }
-    .stroke {
-      fill: black;
+    path {
+      fill: $color-primary;
+      stroke: white;
+      stroke-width: 5px;
     }
   }
 }

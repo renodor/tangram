@@ -7,13 +7,13 @@
 
   <div id="patterns-menu" data-controller="patterns-menu">
     <div id="current-pattern" data-patterns-menu-target="currentPattern" data-id="<%= @current_pattern.id %>">
-      <div class="pattern <%= 'solved' if @solved_patterns.include?(@current_pattern) %>">
-        <%= @current_pattern.name %>
+      <div class="pattern <%= 'solved' if @current_pattern.solved?(current_user) %>">
+        <%= svg "patterns/#{@current_pattern.name.parameterize}.svg", "svg-pattern #{'solved' if @current_pattern.solved?(current_user)}" %>
       </div>
     </div>
     <div id="hide-pattern-menu" data-action="click->patterns-menu#toggle">
       <span>
-        V
+        <%= svg 'caret' %>
       </span>
     </div>
     <div id="patterns">
@@ -23,11 +23,10 @@
           data-id="<%= pattern.id %>"
           data-name="<%= pattern.name %>"
           data-action="click->patterns-menu#selectPattern"
-          data-solved="<%= @solved_patterns.include?(pattern) %>"
+          data-solved="<%= pattern.solved?(current_user) %>"
           data-patterns-menu-target="pattern"
         >
-          <%= svg "patterns/square.svg", 'svg-pattern' %>
-          <%= pattern.name %>
+          <%= svg "patterns/#{pattern.name.parameterize}.svg", "svg-pattern #{'solved' if pattern.solved?(current_user)}" %>
         </div>
       <% end %>
     </div>

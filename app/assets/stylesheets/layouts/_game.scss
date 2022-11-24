@@ -18,19 +18,19 @@
     right: 0;
     bottom: 0;
     transition: bottom .5s ease;
-    &.hidden {
-      bottom: -98px;
-    }
     #current-pattern {
       display: flex;
       align-items: center;
       justify-content: center;
       .pattern {
         background-color: white;
-        padding: 30px;
+        padding: 10px;
         margin: 10px 10px 0 10px;
-        &.solved {
-          color: green
+        border-radius: $border-radius;
+        border: $border;
+        svg {
+          width: 100px;
+          height: 100px;
         }
       }
     }
@@ -40,8 +40,11 @@
       justify-content: center;
       padding: 10px;
       cursor: pointer;
-      span {
-        background-color: white;
+      svg {
+        transition: transform .5s ease;
+        path {
+          fill: $color-primary;
+        }
       }
     }
     #patterns {
@@ -52,8 +55,10 @@
       column-gap: 10px;
       justify-content: space-between;
       overflow-x: auto;
+      border-radius: $border-radius;
+      border: $border;
       .pattern {
-        padding: 20px;
+        padding: 10px;
         border: 1px solid white;
         cursor: pointer;
         &:hover {
@@ -65,6 +70,12 @@
         &[data-solved=true] {
           color: green
         }
+      }
+    }
+    &.hidden {
+      bottom: -98px;
+      #hide-pattern-menu svg {
+        transform: scale(1, -1);
       }
     }
   }

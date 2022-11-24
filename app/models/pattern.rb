@@ -20,4 +20,8 @@ class Pattern < ApplicationRecord
 
     points
   end
+
+  def solved?(user)
+    SolvedPattern.find_by(pattern_id: id, user_id: user.id)
+  end
 end
