@@ -1,9 +1,0 @@
-<svg id="sitted_man" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 247.23 192.89">
-  <path id="mediumTriangle" d="M521,116.48l-45,45-45-45Z" transform="translate(-285.25 29.32)" />
-  <path id="smallTriangle" d="M479.55-21.2l44.51-6.42,6.42,44.5Z" transform="translate(-285.25 29.32)" />
-  <path id="parallelogram" d="M380.59,129.65h63.6l31.8,31.8h-63.6Z" transform="translate(-285.25 29.32)" />
-  <path id="smallTriangle-2" data-name="smallTriangle" d="M352.47,129.64l-31.8,31.8-31.8-31.8Z" transform="translate(-285.25 29.32)" />
-  <path id="cube" d="M460.05,20.44l27-36,36,27-27,36Z" transform="translate(-285.25 29.32)" />
-  <path id="bigTriangle" d="M431,116.47,521,26.53v89.94Z" transform="translate(-285.25 29.32)" />
-  <path id="bigTriangle-2" data-name="bigTriangle" d="M317,129.64,380.59,66l63.6,63.6Z" transform="translate(-285.25 29.32)" />
-</svg>

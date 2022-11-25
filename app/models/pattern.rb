@@ -22,6 +22,6 @@ class Pattern < ApplicationRecord
   end
 
   def solved?(user)
-    SolvedPattern.find_by(pattern_id: id, user_id: user.id)
+    SolvedPattern.find_by(pattern_id: id, user_id: user.id).present?
   end
 end

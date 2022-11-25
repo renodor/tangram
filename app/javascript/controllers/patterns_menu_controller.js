@@ -8,13 +8,13 @@ export default class extends Controller {
   }
 
   selectPattern(event) {
-    const { id, name, solved } = event.currentTarget.dataset
+    const { id, imageUrl, solved } = event.currentTarget.dataset
     this.currentPatternTarget.dataset.id = id
     this.patternTargets.forEach((pattern) => pattern.classList.remove('current'))
     event.currentTarget.classList.add('current')
 
     const currentPattern = this.currentPatternTarget.querySelector('.pattern')
-    currentPattern.innerHTML = name
+    currentPattern.innerHTML = `<img src="${imageUrl}">`
     if (solved === 'true') {
       currentPattern.classList.add('solved')
     } else {

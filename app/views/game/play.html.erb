@@ -20,13 +20,19 @@
       <% @patterns.each do |pattern| %>
         <div
           class="pattern <%= 'current' if pattern == @current_pattern %>"
+          data-patterns-menu-target="pattern"
           data-id="<%= pattern.id %>"
           data-name="<%= pattern.name %>"
           data-action="click->patterns-menu#selectPattern"
           data-solved="<%= pattern.solved?(current_user) %>"
-          data-patterns-menu-target="pattern"
+          data-image-url="<%= image_path("patterns/#{pattern.name.parameterize(separator: '_')}.svg") %>"
         >
-          <%= svg "patterns/#{pattern.name.parameterize}.svg", "svg-pattern #{'solved' if pattern.solved?(current_user)}" %>
+          <%
+=begin%>
+ <%= svg "patterns/#{pattern.name.parameterize}.svg", "svg-pattern #{'solved' if pattern.solved?(current_user)}" %> 
+<%
+=end%>
+        <%= svg "patterns/#{pattern.name.parameterize(separator: '_')}.svg" %>
         </div>
       <% end %>
     </div>

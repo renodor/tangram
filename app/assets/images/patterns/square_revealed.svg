@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">
+  <title>tangram</title>
+  <g id="square_revealed">
+    <polygon points="310.83 305.17 310.83 194.83 255.66 250 310.83 305.17" style="fill: #2c464b"/>
+    <polygon points="375.66 240.34 375.66 124.34 259.66 124.34 375.66 240.34" style="fill: #2c464b"/>
+    <polygon points="318.83 313.17 375.66 370 375.66 251.66 318.83 194.83 318.83 313.17" style="fill: #2c464b"/>
+    <polygon points="240.34 124.34 130 124.34 185.17 179.51 240.34 124.34" style="fill: #2c464b"/>
+    <rect x="208.16" y="143.33" width="83.68" height="83.68" transform="translate(-57.71 231.01) rotate(-45)" style="fill: #2c464b"/>
+    <polygon points="124.34 130 124.34 370 244.34 250 124.34 130" style="fill: #2c464b"/>
+    <polygon points="250 255.66 130 375.66 370 375.66 250 255.66" style="fill: #2c464b"/>
+  </g>
+</svg>

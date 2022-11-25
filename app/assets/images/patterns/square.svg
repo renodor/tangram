@@ -1,9 +1,6 @@
-<svg id="square" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 134.43 134.43">
-  <path id="smallTriangle" d="M31.8,31.8,63.59,63.59,31.8,95.39Z" />
-  <path id="mediumTriangle" d="M63.59,127.19H0V63.59Z" />
-  <path id="bigTriangle" d="M127.19,0,63.59,63.59,0,0Z" />
-  <path id="smallTriangle-2" d="M63.59,127.19l31.8-31.8,31.8,31.8Z" />
-  <path id="parallelogram" d="M0,0V63.59l31.8,31.8V31.8Z" />
-  <path id="cube" d="M31.8,95.39l31.79-31.8,31.8,31.8-31.8,31.8Z" />
-  <path id="bigTriangle-2" d="M127.19,0V127.19l-63.6-63.6Z" />
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">
+  <title>tangram</title>
+  <g id="square">
+    <path d="M371.66,128.34V371.66H128.34V128.34H371.66m8-8H120.34V379.66H379.66V120.34Z" style="fill: #2c464b"/>
+  </g>
 </svg>
