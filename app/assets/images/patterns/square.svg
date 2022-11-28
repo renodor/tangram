@@ -1,6 +1,3 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">
-  <title>tangram</title>
-  <g id="square">
-    <path d="M371.66,128.34V371.66H128.34V128.34H371.66m8-8H120.34V379.66H379.66V120.34Z" style="fill: #2c464b"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+  <path d="M371.66,128.34V371.66H128.34V128.34H371.66m8-8H120.34V379.66H379.66V120.34Z" style="fill: #2c464b"/>
 </svg>

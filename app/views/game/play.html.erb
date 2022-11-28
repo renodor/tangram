@@ -7,32 +7,15 @@
 
   <div id="patterns-menu" data-controller="patterns-menu">
     <div id="current-pattern" data-patterns-menu-target="currentPattern" data-id="<%= @current_pattern.id %>">
-      <div class="pattern <%= 'solved' if @current_pattern.solved?(current_user) %>">
-        <%= svg "patterns/#{@current_pattern.name.parameterize}.svg", "svg-pattern #{'solved' if @current_pattern.solved?(current_user)}" %>
-      </div>
+       <%= render 'pattern', pattern: @current_pattern, type: 'current' %>
     </div>
     <div id="hide-pattern-menu" data-action="click->patterns-menu#toggle">
-      <span>
-        <%= svg 'caret' %>
-      </span>
+      <%= svg 'caret' %>
     </div>
     <div id="patterns">
       <% @patterns.each do |pattern| %>
-        <div
-          class="pattern <%= 'current' if pattern == @current_pattern %>"
-          data-patterns-menu-target="pattern"
-          data-id="<%= pattern.id %>"
-          data-name="<%= pattern.name %>"
-          data-action="click->patterns-menu#selectPattern"
-          data-solved="<%= pattern.solved?(current_user) %>"
-          data-image-url="<%= image_path("patterns/#{pattern.name.parameterize(separator: '_')}.svg") %>"
-        >
-          <%
-=begin%>
- <%= svg "patterns/#{pattern.name.parameterize}.svg", "svg-pattern #{'solved' if pattern.solved?(current_user)}" %> 
-<%
-=end%>
-        <%= svg "patterns/#{pattern.name.parameterize(separator: '_')}.svg" %>
+        <div data-action="click->patterns-menu#selectPattern">
+          <%= render 'pattern', pattern: pattern, type: pattern == @current_pattern ? 'selected' : '' %>
         </div>
       <% end %>
     </div>

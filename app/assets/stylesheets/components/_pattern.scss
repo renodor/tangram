@@ -1,0 +1,35 @@
+.pattern {
+  padding: 10px;
+  border-radius: $border-radius;
+  transition: background-color .3s ease;
+  cursor: pointer;
+
+  svg {
+    width: 80px;
+    height: 80px;
+    path {
+      fill: none;
+      stroke: #2c464b;
+      stroke-width: 15px;
+    }
+  }
+
+  &:hover {
+    background-color: $color-secondary;
+  }
+
+  &.selected {
+    background-color: $color-secondary;
+  }
+
+  &.current {
+    border: $border;
+    background-color: white;
+    padding: 15px;
+
+    svg {
+      width: 130px;
+      height: 130px;
+    }
+  }
+}

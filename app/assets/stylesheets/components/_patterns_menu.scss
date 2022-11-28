@@ -1,0 +1,52 @@
+  #patterns-menu {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    transition: bottom .5s ease;
+
+    #current-pattern {
+      position: absolute;
+      left: calc(100vw / 2 - 82px);
+      bottom: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #hide-pattern-menu {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      cursor: pointer;
+
+      svg {
+        transition: transform .5s ease;
+
+        path {
+          fill: $color-primary;
+        }
+      }
+    }
+
+    #patterns {
+      margin: 0 50px 10px 50px;
+      padding: 15px;
+      background-color: white;
+      display: flex;
+      column-gap: 10px;
+      justify-content: space-between;
+      overflow-x: auto;
+      border-radius: $border-radius;
+      border: $border;
+    }
+
+    &.hidden {
+      bottom: -140px;
+
+      #hide-pattern-menu svg {
+        transform: scale(1, -1);
+      }
+    }
+  }
