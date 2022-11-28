@@ -5,15 +5,6 @@
     bottom: 0;
     transition: bottom .5s ease;
 
-    #current-pattern {
-      position: absolute;
-      left: calc(100vw / 2 - 82px);
-      bottom: 200px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
     #hide-pattern-menu {
       display: flex;
       align-items: center;

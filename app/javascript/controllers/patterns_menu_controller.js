@@ -1,22 +1,51 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["pattern", "currentPattern", "solvedPatterns"]
+  static targets = ["currentPattern", "patternSvg", "revealPattern", "pattern"]
 
   toggle() {
     this.element.classList.toggle('hidden')
   }
 
   selectPattern(event) {
-    const selectedPattern = event.currentTarget.querySelector('.pattern')
-    const newCurrentPattern = selectedPattern.cloneNode(true)
+    const selectedPattern = event.currentTarget
 
-    this.currentPatternTarget.dataset.id = selectedPattern.dataset.id
-    this.patternTargets.forEach((pattern) => pattern.classList.remove('selected'))
-    selectedPattern.classList.add('selected')
+    const { id, solved } = selectedPattern.dataset
+    this.currentPatternTarget.dataset.id = id
+    this.currentPatternTarget.dataset.solved = solved
 
-    newCurrentPattern.classList.add('current')
-    this.currentPatternTarget.innerHTML = ''
-    this.currentPatternTarget.appendChild(newCurrentPattern)
+    this.patternTargets.forEach((pattern) => pattern.dataset.selected = false)
+    selectedPattern.dataset.selected = true
+
+    this.patternSvgTarget.innerHTML = ''
+    this.patternSvgTarget.appendChild(selectedPattern.querySelector('svg').cloneNode(true))
+
+    if (solved === 'true') {
+      this.revealPatternTarget.classList.remove('display-none')
+    } else {
+      this.revealPatternTarget.classList.add('display-none')
+    }
+  }
+
+  revealPattern() {
+    if (this.currentPatternTarget.dataset.revealed === 'false') {
+      this.currentPatternTarget.dataset.revealed = true
+      fetch(`/patterns/${this.currentPatternTarget.dataset.id}/revealed_svg`)
+        .then((response) => response.text())
+        .then((svgTag) => {
+          this.patternSvgTarget.children[0].classList.add('display-none')
+          this.patternSvgTarget.insertAdjacentHTML('afterbegin', svgTag)
+
+          this.revealPatternTarget.querySelector('.eye').classList.add('display-none')
+          this.revealPatternTarget.querySelector('.eye-crossed').classList.remove('display-none')
+        })
+    } else {
+      this.currentPatternTarget.dataset.revealed = false
+      this.patternSvgTarget.children[0].remove()
+      this.patternSvgTarget.children[0].classList.remove('display-none')
+
+      this.revealPatternTarget.querySelector('.eye-crossed').classList.add('display-none')
+      this.revealPatternTarget.querySelector('.eye').classList.remove('display-none')
+    }
   }
 }

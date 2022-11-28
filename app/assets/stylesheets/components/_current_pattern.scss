@@ -1,0 +1,37 @@
+#current-pattern {
+  position: absolute;
+  left: calc(100vw / 2 - 82px);
+  bottom: 200px;
+  padding: 10px;
+  border-radius: $border-radius;
+  border: $border;
+  background-color: white;
+  padding: 15px;
+
+  .pattern-svg svg {
+    width: 130px;
+    height: 130px;
+
+    path {
+      fill: none;
+      stroke: $color-primary;
+      stroke-width: 15px;
+    }
+  }
+
+  .reveal-pattern {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    left: 10px;
+    top: 5px;
+    fill: $color-primary;
+    cursor: pointer
+  }
+
+  &[data-solved=true] {
+    .pattern-svg path {
+      fill: $color-primary;
+    }
+  }
+}

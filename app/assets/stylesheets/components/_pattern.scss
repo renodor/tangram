@@ -1,7 +1,7 @@
 .pattern {
   padding: 10px;
   border-radius: $border-radius;
-  transition: background-color .3s ease;
+  transition: background-color .3s ease, transform .3s ease;
   cursor: pointer;
 
   svg {
@@ -9,7 +9,7 @@
     height: 80px;
     path {
       fill: none;
-      stroke: #2c464b;
+      stroke: $color-primary;
       stroke-width: 15px;
     }
   }
@@ -18,18 +18,13 @@
     background-color: $color-secondary;
   }
 
-  &.selected {
-    background-color: $color-secondary;
+  &[data-solved=true] {
+    path {
+      fill: $color-primary;
+    }
   }
 
-  &.current {
-    border: $border;
-    background-color: white;
-    padding: 15px;
-
-    svg {
-      width: 130px;
-      height: 130px;
-    }
+  &[data-selected=true] {
+    background-color: $color-secondary;
   }
 }

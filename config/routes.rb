@@ -5,6 +5,11 @@ Rails.application.routes.draw do
 
   root 'game#play'
 
-  resources :patterns, only: :show
+  resources :patterns, only: :show do
+    member do
+      get :revealed_svg
+    end
+  end
+
   resources :solved_patterns, only: :create
 end
