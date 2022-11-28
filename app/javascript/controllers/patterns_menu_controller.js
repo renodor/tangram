@@ -19,12 +19,6 @@ export default class extends Controller {
 
     this.patternSvgTarget.innerHTML = ''
     this.patternSvgTarget.appendChild(selectedPattern.querySelector('svg').cloneNode(true))
-
-    if (solved === 'true') {
-      this.revealPatternTarget.classList.remove('display-none')
-    } else {
-      this.revealPatternTarget.classList.add('display-none')
-    }
   }
 
   revealPattern() {

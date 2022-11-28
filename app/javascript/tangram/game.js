@@ -370,10 +370,23 @@ const initAndPlay = (canvas) => {
           body: JSON.stringify({ pattern_id: currentPattern.id })
         }
       )
-
-      document.querySelector('#current-pattern .pattern').classList.add('solved')
-      document.querySelector('#patterns .pattern.current').dataset.solved = true
+      .then((response) => {
+        // Parse data only if this pattern was not already solved by current user
+        if (response.status == 200) { return response.text() }
+      })
+      .then((data) => {
+        if (data) { displayNewSolvedPattern(data) }
+      })
     }
+  }
+
+  function displayNewSolvedPattern(svgTag) {
+    document.querySelector('#current-pattern').dataset.solved = true
+    document.querySelector('#patterns .pattern[data-selected=true]').dataset.solved = true
+
+    const modal = document.querySelector('.modal-container')
+    modal.querySelector('.modal .modal-content .modal-body').innerHTML = svgTag
+    modal.classList.remove('display-none')
   }
 
   function roundAtTwoDecimal(num) {

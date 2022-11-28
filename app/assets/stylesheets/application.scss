@@ -1,13 +1,15 @@
-// Sassy
-
 @import 'config/variables';
+@import 'config/utilities';
 
 @import 'layouts/game';
 
 @import 'components/patterns_menu';
 @import 'components/pattern';
 @import 'components/current_pattern';
+@import 'components/modal';
+@import 'components/button';
 
-.display-none {
-  display: none;
+body {
+  font-family: $font;
 }
+

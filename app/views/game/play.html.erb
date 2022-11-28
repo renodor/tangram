@@ -10,7 +10,6 @@
       id="current-pattern"
       data-patterns-menu-target="currentPattern"
       data-id="<%= @current_pattern.id %>"
-      data-action="click->patterns-menu#revealPattern"
       data-solved="<%= @current_pattern.solved?(current_user) %>"
       data-revealed="false"
     >
@@ -19,7 +18,8 @@
       </div>
       <div
         data-patterns-menu-target="revealPattern"
-        class="reveal-pattern <%= 'display-none' unless @current_pattern.solved?(current_user) %>"
+        data-action="click->patterns-menu#revealPattern"
+        class="reveal-pattern"
       >
         <%= svg 'icons/eye_fill.svg', 'eye' %>
         <%= svg 'icons/eye_crossed.svg', 'eye-crossed display-none' %>

@@ -20,18 +20,23 @@
   }
 
   .reveal-pattern {
+    display: none;
     width: 20px;
     height: 20px;
     position: absolute;
     left: 10px;
     top: 5px;
     fill: $color-primary;
-    cursor: pointer
+    cursor: pointer;
   }
 
   &[data-solved=true] {
     .pattern-svg path {
       fill: $color-primary;
+    }
+
+    .reveal-pattern {
+      display: block;
     }
   }
 }
