@@ -28,6 +28,8 @@
         svg {
           width: 200px;
           height: 200px;
+          opacity: 0;
+          transition: opacity .5s ease
         }
       }
 

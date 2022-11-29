@@ -6,5 +6,10 @@ class GameController < ApplicationController
   def play
     @patterns = Pattern.all
     @current_pattern = @patterns.sample
+    @current_pattern_json = {
+      id: @current_pattern.id,
+      name: @current_pattern.name,
+      polygons: @current_pattern.points_by_polygons_shape
+    }.to_json
   end
 end
