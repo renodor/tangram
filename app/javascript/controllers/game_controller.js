@@ -7,11 +7,26 @@ import Tangram from '../tangram/tangram.js'
 
 export default class extends Controller {
   static values = {
-    currentPattern: Object
+    currentPatternId: Number,
+    currentPatternPolygons: Object
   }
 
   connect() {
     this.initAndPlay(this.element)
+  }
+
+  changeCurrentPattern({ detail: { id } }) {
+    this.currentPatternIdValue = id
+  }
+
+  currentPatternIdValueChanged() {
+    this.fetchCurrentPatternPolygons()
+  }
+
+  fetchCurrentPatternPolygons() {
+    fetch(`/patterns/${this.currentPatternIdValue}/points_by_polygons_shape`, { headers: { 'accept': 'application/json' } })
+      .then((response) => response.json())
+      .then((polygons) => this.currentPatternPolygons = polygons)
   }
 
   initAndPlay(canvas) {
@@ -332,13 +347,13 @@ export default class extends Controller {
 
       return this.polygonVerticesToPatternRefLocal(polygon).every(([polygonX, polygonY], index) => {
         if (polygon.userData.duplicated) {
-          return this.currentPatternValue.polygons[polygon.name].some((patternPoints) => {
+          return this.currentPatternPolygonsValue[polygon.name].some((patternPoints) => {
             const xDiff = Math.abs(polygonX - patternPoints[index][0])
             const yDiff = Math.abs(polygonY - patternPoints[index][1])
             return (xDiff <= 2) && (yDiff <= 2)
           })
         } else {
-          return this.currentPatternValue.polygons[polygon.name].some(([patternX, patternY]) => {
+          return this.currentPatternPolygonsValue[polygon.name].some(([patternX, patternY]) => {
             const xDiff = Math.abs(polygonX - patternX)
             const yDiff = Math.abs(polygonY - patternY)
 
@@ -348,7 +363,7 @@ export default class extends Controller {
             //   polygonX: polygonX,
             //   polygonY: polygonY,
             //   patternX: patternX,
-            //   patternY: this.currentPatternValue.polygons[polygon.name][index][1],
+            //   patternY: this.currentPatternPolygonsValue[polygon.name][index][1],
             //   result: (xDiff <= 2) && (yDiff <= 2)
             // })
             return (xDiff <= 2) && (yDiff <= 2)
@@ -359,13 +374,13 @@ export default class extends Controller {
     })
 
     if (polygonsMatchPattern) {
-      console.log(`Bravo you found "${this.currentPatternValue.name.toUpperCase()}" pattern!`)
+      console.log(`Bravo you found a pattern!`)
       fetch(
         `/solved_patterns`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ pattern_id: this.currentPatternValue.id })
+          body: JSON.stringify({ pattern_id: this.currentPatternIdValue })
         }
       )
         .then((response) => {

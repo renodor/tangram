@@ -5,8 +5,9 @@ Rails.application.routes.draw do
 
   root 'game#play'
 
-  resources :patterns, only: :show do
+  resources :patterns do
     member do
+      get :points_by_polygons_shape
       get :revealed_svg
     end
   end

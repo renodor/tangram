@@ -1,41 +1,46 @@
 <div id="game">
   <canvas
     data-controller="game"
-    data-game-current-pattern-value="<%= @current_pattern_json %>"
+    data-action="patterns:currentPatternChange@document->game#changeCurrentPattern"
+    data-game-current-pattern-id-value="<%= @current_pattern.id %>"
   >
   </canvas>
   <button id="pattern-reveal">Reveal Pattern</button>
 
-  <div id="patterns-menu" data-controller="patterns-menu">
+  <div
+    id="patterns-menu"
+    data-controller="patterns"
+  >
     <div
       id="current-pattern"
-      data-patterns-menu-target="currentPattern"
+      data-patterns-target="currentPattern"
+      data-game-target="blabla"
       data-id="<%= @current_pattern.id %>"
       data-solved="<%= @current_pattern.solved?(current_user) %>"
       data-revealed="false"
     >
-      <div data-patterns-menu-target="patternSvg" class="pattern-svg">
+      <div data-patterns-target="patternSvg" class="pattern-svg">
         <%= svg "patterns/#{@current_pattern.name}.svg" %>
       </div>
       <div
-        data-patterns-menu-target="revealPattern"
-        data-action="click->patterns-menu#revealPattern"
+        data-patterns-target="revealPattern"
+        data-action="click->patterns#revealPattern"
         class="reveal-pattern"
       >
         <%= svg 'icons/eye_fill.svg', 'eye' %>
         <%= svg 'icons/eye_crossed.svg', 'eye-crossed display-none' %>
       </div>
     </div>
-    <div id="hide-pattern-menu" data-action="click->patterns-menu#toggle">
+    <div id="hide-pattern-menu" data-action="click->patterns#toggle">
       <%= svg 'icons/caret' %>
     </div>
     <div id="patterns">
       <% @patterns.each do |pattern| %>
         <div
           class="pattern"
-          data-patterns-menu-target="pattern"
+          data-patterns-target="pattern"
           data-id="<%= pattern.id %>"
-          data-action="click->patterns-menu#selectPattern"
+          data-action="click->patterns#selectPattern"
           data-solved="<%= pattern.solved?(current_user) %>"
           data-selected="<%= pattern == @current_pattern %>"
         >
