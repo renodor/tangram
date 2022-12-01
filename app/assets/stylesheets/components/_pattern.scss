@@ -7,11 +7,9 @@
   svg {
     width: 80px;
     height: 80px;
-    path {
-      fill: none;
-      stroke: $color-primary;
-      stroke-width: 15px;
-    }
+    fill: $color-primary;
+    stroke: $color-primary;
+    stroke-width: 3px;
   }
 
   &:hover {

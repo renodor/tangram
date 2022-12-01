@@ -10,17 +10,17 @@
   <div
     id="patterns-menu"
     data-controller="patterns"
+    data-action="game:currentPatternSolved@document->patterns#solveCurrentPattern"
   >
     <div
       id="current-pattern"
       data-patterns-target="currentPattern"
-      data-game-target="blabla"
       data-id="<%= @current_pattern.id %>"
       data-solved="<%= @current_pattern.solved?(current_user) %>"
       data-revealed="false"
     >
       <div data-patterns-target="patternSvg" class="pattern-svg">
-        <%= svg "patterns/#{@current_pattern.name}.svg" %>
+        <%= pattern_svg(@current_pattern) %>
       </div>
       <div
         data-patterns-target="revealPattern"
@@ -44,7 +44,7 @@
           data-solved="<%= pattern.solved?(current_user) %>"
           data-selected="<%= pattern == @current_pattern %>"
         >
-          <%= svg "patterns/#{pattern.name}.svg" %>
+          <%= pattern_svg(pattern) %>
         </div>
       <% end %>
     </div>

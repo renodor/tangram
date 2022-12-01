@@ -377,7 +377,7 @@ export default class extends Controller {
     if (polygonsMatchPattern) {
       console.log(`Bravo you found a pattern!`)
 
-      if (!this.currentPatternSolvedValue) {
+      if (this.currentPatternSolvedValue) {
         this.currentPatternSolvedValue = true
         fetch(
           `/solved_patterns`,
@@ -390,10 +390,9 @@ export default class extends Controller {
         .then((response) => response.text())
         .then((svgTag) => this.dispatch('newSolvedPattern', { detail: { svgTag } }))
 
-        // TODO: dispatch an event to patterns controller to mark display this new pattern has solved
-        // (show filled svg + eye to display the revealed svg)
       }
     }
+    this.dispatch('currentPatternSolved', { detail: { hey: "you" }})
   }
 
   displayNewSolvedPattern(svgTag) {

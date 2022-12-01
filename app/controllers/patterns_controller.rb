@@ -9,6 +9,11 @@ class PatternsController < ApplicationController
     }
   end
 
+  def filled_svg
+    pattern = Pattern.find(params[:id])
+    render html: helpers.svg("patterns/#{pattern.name}_filled.svg")
+  end
+
   def revealed_svg
     pattern = Pattern.find(params[:id])
 

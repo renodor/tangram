@@ -11,12 +11,7 @@
   .pattern-svg svg {
     width: 130px;
     height: 130px;
-
-    path {
-      fill: none;
-      stroke: $color-primary;
-      stroke-width: 15px;
-    }
+    fill: $color-primary;
   }
 
   .reveal-pattern {

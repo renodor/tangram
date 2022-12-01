@@ -29,4 +29,9 @@ module SvgHelper
 
     svg_content
   end
+
+  def pattern_svg(pattern)
+    type = current_user && pattern.solved?(current_user) ? 'filled' : 'outlined'
+    svg("patterns/#{pattern.name}_#{type}.svg")
+  end
 end

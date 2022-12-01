@@ -1,12 +1,3 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">
-  <title>tangram</title>
-  <g id="sitted_man_revealed">
-    <polygon points="453.06 329.77 294.01 329.75 373.52 409.28 453.06 329.77" style="fill: #2c464b"/>
-    <polygon points="465.27 45.46 390.4 56.27 476.08 120.33 465.27 45.46" style="fill: #2c464b"/>
-    <polygon points="364.17 410.9 309.08 355.81 194.35 355.81 249.44 410.9 364.17 410.9" style="fill: #2c464b"/>
-    <polygon points="120.04 355.79 13.06 355.79 66.55 409.28 120.04 355.79" style="fill: #2c464b"/>
-    <rect x="363.69" y="86.58" width="81.13" height="81.13" transform="translate(60.14 374.47) rotate(-53.17)" style="fill: #2c464b"/>
-    <polygon points="458.54 321.99 458.54 157.47 294.01 321.99 458.54 321.99" style="fill: #2c464b"/>
-    <polygon points="68.65 348.02 301.32 348.02 184.99 231.69 68.65 348.02" style="fill: #2c464b"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+  <path id="sitted_man_revealed-2" data-name="sitted_man_revealed" d="M472.85,355.05l-87.61,87.59L297.66,355Zm25.7-211.31L484,57.36,397.59,72ZM250,442.63H373.9L312,380.69H188.08ZM1.45,380.69l61.94,61.94,61.94-61.94ZM428.24,211.34,479,139.94,407.6,89.19l-50.76,71.39ZM473.35,347V171.83L298.16,347ZM304,372.69,180.11,248.81,56.23,372.69Z" />
 </svg>

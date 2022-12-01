@@ -28,6 +28,17 @@ export default class extends Controller {
     this.patternSvgTarget.appendChild(selectedPattern.querySelector('svg').cloneNode(true))
   }
 
+  solveCurrentPattern() {
+    fetch(`/patterns/${this.currentPatternTarget.dataset.id}/filled_svg`)
+      .then((response) => response.text())
+      .then((svgTag) => {
+        this.patternSvgTarget.innerHTML = svgTag
+        const selectedPattern = this.patternTargets.find((pattern) => pattern.dataset.selected === "true")
+        selectedPattern.innerHTML = svgTag
+        selectedPattern.dataset.solved = true
+      })
+  }
+
   revealPattern() {
     if (this.currentPatternTarget.dataset.revealed === 'false') {
       this.currentPatternTarget.dataset.revealed = true

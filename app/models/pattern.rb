@@ -21,7 +21,9 @@ class Pattern < ApplicationRecord
     points
   end
 
-  def solved?(user)
+  def solved?(user = nil)
+    return false unless user
+
     SolvedPattern.find_by(pattern_id: id, user_id: user.id).present?
   end
 end

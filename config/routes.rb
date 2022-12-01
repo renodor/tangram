@@ -7,6 +7,7 @@ Rails.application.routes.draw do
 
   resources :patterns, only: :show do
     member do
+      get :filled_svg
       get :revealed_svg
     end
   end
