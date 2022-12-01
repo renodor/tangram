@@ -1,7 +1,7 @@
 <div id="game">
   <canvas
     data-controller="game"
-    data-action="patterns:currentPatternChange@document->game#changeCurrentPattern"
+    data-action="patterns:currentPatternChanged@document->game#changeCurrentPattern"
     data-game-current-pattern-id-value="<%= @current_pattern.id %>"
   >
   </canvas>

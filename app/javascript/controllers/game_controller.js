@@ -8,25 +8,26 @@ import Tangram from '../tangram/tangram.js'
 export default class extends Controller {
   static values = {
     currentPatternId: Number,
-    currentPatternPolygons: Object
+    currentPatternPolygons: Object,
+    currentPatternSolved: Boolean
   }
 
   connect() {
     this.initAndPlay(this.element)
   }
 
-  changeCurrentPattern({ detail: { id } }) {
+  changeCurrentPattern({ detail: { id, solved } }) {
     this.currentPatternIdValue = id
+    this.currentPatternSolvedValue = solved
   }
 
   currentPatternIdValueChanged() {
-    this.fetchCurrentPatternPolygons()
-  }
-
-  fetchCurrentPatternPolygons() {
-    fetch(`/patterns/${this.currentPatternIdValue}/points_by_polygons_shape`, { headers: { 'accept': 'application/json' } })
+    fetch(`/patterns/${this.currentPatternIdValue}`, { headers: { 'accept': 'application/json' } })
       .then((response) => response.json())
-      .then((polygons) => this.currentPatternPolygons = polygons)
+      .then(({ polygons, solved }) => {
+        this.currentPatternPolygonsValue = polygons
+        this.currentPatternSolvedValue = solved
+      })
   }
 
   initAndPlay(canvas) {
@@ -375,21 +376,23 @@ export default class extends Controller {
 
     if (polygonsMatchPattern) {
       console.log(`Bravo you found a pattern!`)
-      fetch(
-        `/solved_patterns`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ pattern_id: this.currentPatternIdValue })
-        }
-      )
-        .then((response) => {
-          // Parse data only if this pattern was not already solved by current user
-          if (response.status == 200) { return response.text() }
-        })
-        .then((data) => {
-          if (data) { this.displayNewSolvedPattern(data) }
-        })
+
+      if (!this.currentPatternSolvedValue) {
+        this.currentPatternSolvedValue = true
+        fetch(
+          `/solved_patterns`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pattern_id: this.currentPatternIdValue })
+          }
+        )
+        .then((response) => response.text())
+        .then((svgTag) => this.dispatch('newSolvedPattern', { detail: { svgTag } }))
+
+        // TODO: dispatch an event to patterns controller to mark display this new pattern has solved
+        // (show filled svg + eye to display the revealed svg)
+      }
     }
   }
 

@@ -1,15 +1,18 @@
-<div class="modal-container display-none" data-controller="modal">
-  <div class="modal centered-flexbox">
+<div
+  class="modal-container display-none"
+  data-controller="winning-modal"
+  data-action="game:newSolvedPattern@document->winning-modal#open"
+>
+  <div class="winning-modal centered-flexbox">
     <div class="modal-content centered-flexbox">
       <div class="modal-title">
         <h1>You're a Boss!</h1>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" data-winning-modal-target="body">
         <!-- ... -->
-        <%= svg "/patterns/#{@current_pattern.name}_revealed.svg" %>
       </div>
       <div class="modal-buttons">
-        <button class="button primary" data-action="click->modal#close">
+        <button class="button primary" data-action="click->winning-modal#close">
           Continue
         </button>
       </div>

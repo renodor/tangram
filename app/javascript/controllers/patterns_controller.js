@@ -11,7 +11,12 @@ export default class extends Controller {
     const selectedPattern = event.currentTarget
     const { id, solved } = selectedPattern.dataset
 
-    this.dispatch('currentPatternChange', { detail: { id: parseInt(id) } })
+    this.dispatch('currentPatternChanged', {
+      detail: {
+        id: parseInt(id),
+        solved: solved === 'true'
+      }
+    })
 
     this.currentPatternTarget.dataset.id = id
     this.currentPatternTarget.dataset.solved = solved
