@@ -3,6 +3,7 @@
     data-controller="game"
     data-action="patterns:currentPatternChanged@document->game#changeCurrentPattern"
     data-game-current-pattern-id-value="<%= @current_pattern.id %>"
+    data-game-current-pattern-solved-value="<%= @current_pattern.solved?(current_user) %>"
   >
   </canvas>
   <button id="pattern-reveal">Reveal Pattern</button>
@@ -19,12 +20,12 @@
       data-solved="<%= @current_pattern.solved?(current_user) %>"
       data-revealed="false"
     >
-      <div data-patterns-target="patternSvg" class="pattern-svg">
+      <div data-patterns-target="currentPatternSvg" class="pattern-svg">
         <%= pattern_svg(@current_pattern) %>
       </div>
       <div
         data-patterns-target="revealPattern"
-        data-action="click->patterns#revealPattern"
+        data-action="click->patterns#toggleRevealPattern"
         class="reveal-pattern"
       >
         <%= svg 'icons/eye_fill.svg', 'eye' %>
@@ -40,7 +41,7 @@
           class="pattern"
           data-patterns-target="pattern"
           data-id="<%= pattern.id %>"
-          data-action="click->patterns#selectPattern"
+          data-action="click->patterns#changeCurrentPattern"
           data-solved="<%= pattern.solved?(current_user) %>"
           data-selected="<%= pattern == @current_pattern %>"
         >

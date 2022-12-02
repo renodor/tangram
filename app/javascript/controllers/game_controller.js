@@ -8,12 +8,12 @@ import Tangram from '../tangram/tangram.js'
 export default class extends Controller {
   static values = {
     currentPatternId: Number,
-    currentPatternPolygons: Object,
     currentPatternSolved: Boolean
   }
 
   connect() {
     this.initAndPlay(this.element)
+    this.currentPatternPolygons // not a "value" because we don't want to expose that has a HTML data attribute...
   }
 
   changeCurrentPattern({ detail: { id, solved } }) {
@@ -25,7 +25,7 @@ export default class extends Controller {
     fetch(`/patterns/${this.currentPatternIdValue}`, { headers: { 'accept': 'application/json' } })
       .then((response) => response.json())
       .then(({ polygons, solved }) => {
-        this.currentPatternPolygonsValue = polygons
+        this.currentPatternPolygons = polygons
         this.currentPatternSolvedValue = solved
       })
   }
@@ -348,13 +348,13 @@ export default class extends Controller {
 
       return this.polygonVerticesToPatternRefLocal(polygon).every(([polygonX, polygonY], index) => {
         if (polygon.userData.duplicated) {
-          return this.currentPatternPolygonsValue[polygon.name].some((patternPoints) => {
+          return this.currentPatternPolygons[polygon.name].some((patternPoints) => {
             const xDiff = Math.abs(polygonX - patternPoints[index][0])
             const yDiff = Math.abs(polygonY - patternPoints[index][1])
             return (xDiff <= 2) && (yDiff <= 2)
           })
         } else {
-          return this.currentPatternPolygonsValue[polygon.name].some(([patternX, patternY]) => {
+          return this.currentPatternPolygons[polygon.name].some(([patternX, patternY]) => {
             const xDiff = Math.abs(polygonX - patternX)
             const yDiff = Math.abs(polygonY - patternY)
 
@@ -364,7 +364,7 @@ export default class extends Controller {
             //   polygonX: polygonX,
             //   polygonY: polygonY,
             //   patternX: patternX,
-            //   patternY: this.currentPatternPolygonsValue[polygon.name][index][1],
+            //   patternY: this.currentPatternPolygons[polygon.name][index][1],
             //   result: (xDiff <= 2) && (yDiff <= 2)
             // })
             return (xDiff <= 2) && (yDiff <= 2)
@@ -374,10 +374,10 @@ export default class extends Controller {
       })
     })
 
-    if (polygonsMatchPattern) {
+    if (!polygonsMatchPattern) {
       console.log(`Bravo you found a pattern!`)
 
-      if (this.currentPatternSolvedValue) {
+      if (!this.currentPatternSolvedValue) {
         this.currentPatternSolvedValue = true
         fetch(
           `/solved_patterns`,
@@ -391,17 +391,8 @@ export default class extends Controller {
         .then((svgTag) => this.dispatch('newSolvedPattern', { detail: { svgTag } }))
 
       }
+      this.dispatch('currentPatternSolved', { detail: { hey: "you" }})
     }
-    this.dispatch('currentPatternSolved', { detail: { hey: "you" }})
-  }
-
-  displayNewSolvedPattern(svgTag) {
-    document.querySelector('#current-pattern').dataset.solved = true
-    document.querySelector('#patterns .pattern[data-selected=true]').dataset.solved = true
-
-    const modal = document.querySelector('.modal-container')
-    modal.querySelector('.modal .modal-content .modal-body').innerHTML = svgTag
-    modal.classList.remove('display-none')
   }
 
   roundAtTwoDecimal(num) {
