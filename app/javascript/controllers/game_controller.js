@@ -32,10 +32,6 @@ export default class extends Controller {
 
   initAndPlay(canvas) {
     // INIT
-    // const darkColor = 0x5aaaa5
-    // const lightColor = 0x69bfbc
-    // const backgroundColor = 0xF3EADD
-
     this.canvas = canvas
     this.scene = new THREE.Scene()
     this.camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 100)
@@ -49,9 +45,6 @@ export default class extends Controller {
     const directionalLight = new THREE.DirectionalLight()
     directionalLight.position.set(15, 0, 25)
     this.scene.add(directionalLight)
-
-    // const ambiantLight = new THREE.AmbientLight(0x404040)
-    // this.scene.add(ambiantLight)
 
     // HELPERS
     // const grid = new THREE.GridHelper(100, 100);
@@ -108,12 +101,49 @@ export default class extends Controller {
       console.log(JSON.stringify(this.revealPattern()))
     });
 
-    // this.tangram.bigTriangle1.position.set(-20, 0)
-    // this.tangram.bigTriangle2.position.set(-20, 12)
-    // this.tangram.smallTriangle1.position.set(15, 10)
-    // this.tangram.smallTriangle2.position.set(15, 0)
-    // this.tangram.mediumTriangle.position.set(0, 10)
-    // this.tangram.parallelogram.position.set(0, -8)
+    this.tangram.cube.position.set(-0.1043734311668123, 1.21865161319267)
+    this.tangram.cube.rotation.z = -0.8134103462697739
+    this.setSelectedPolygon(this.tangram.cube)
+    this.updateSelectedPolygonPointsAndCheckCollisions()
+    this.removeSelectedPolygon()
+
+    this.tangram.bigTriangle1.position.set(-20.36165560764941, 6.96388943681312)
+    this.tangram.bigTriangle1.rotation.z = 6.519747708306367
+    this.setSelectedPolygon(this.tangram.bigTriangle1)
+    this.updateSelectedPolygonPointsAndCheckCollisions()
+    this.removeSelectedPolygon()
+
+    this.tangram.bigTriangle2.position.set(24.599322892034973, -6.019497732554433)
+    this.tangram.bigTriangle2.rotation.z = -1.994077903661601
+    this.setSelectedPolygon(this.tangram.bigTriangle2)
+    this.updateSelectedPolygonPointsAndCheckCollisions()
+    this.removeSelectedPolygon()
+
+    this.tangram.smallTriangle1.position.set(11.993835687996796, -0.5682255555855642)
+    this.tangram.smallTriangle1.rotation.z = 1.915140347823394
+    this.setSelectedPolygon(this.tangram.smallTriangle1)
+    this.updateSelectedPolygonPointsAndCheckCollisions()
+    this.removeSelectedPolygon()
+
+    this.tangram.smallTriangle2.position.set(14.79895073744335, 12.530463600791704)
+    this.tangram.smallTriangle2.rotation.z = -0.32290721988959836
+    this.setSelectedPolygon(this.tangram.smallTriangle2)
+    this.updateSelectedPolygonPointsAndCheckCollisions()
+    this.removeSelectedPolygon()
+
+    this.tangram.mediumTriangle.position.set(-14.47477365349403, -6.611277123827459)
+    this.tangram.mediumTriangle.rotation.z = -2.498864655040359
+    this.setSelectedPolygon(this.tangram.mediumTriangle)
+    this.updateSelectedPolygonPointsAndCheckCollisions()
+    this.removeSelectedPolygon()
+
+    this.tangram.parallelogram.position.set(-0.15885088312089946, 13.282581820531234)
+    this.tangram.parallelogram.rotation.z = 0.33977633377913374
+    this.setSelectedPolygon(this.tangram.parallelogram)
+    this.updateSelectedPolygonPointsAndCheckCollisions()
+    this.removeSelectedPolygon()
+
+    // this.setInitialPositions()
 
     this.animate();
   }
@@ -122,6 +152,50 @@ export default class extends Controller {
     requestAnimationFrame(this.animate.bind(this))
     // orbitControls.update()
     this.renderer.render(this.scene, this.camera)
+  }
+
+  setInitialPositions() {
+    let bigTriangleCount = 0
+    let smallTriangleCount = 0
+
+    this.tangram.polygons.forEach((polygon) => {
+      switch (polygon.name) {
+        case 'cube':
+          polygon.position.set(-0.1043734311668123, 1.21865161319267)
+          polygon.rotation.z = -0.8134103462697739
+        case 'bigTriangle':
+          if (bigTriangleCount === 0) {
+            polygon.position.set(-20.36165560764941, 6.96388943681312)
+            polygon.rotation.z = 6.519747708306367
+            bigTriangleCount += 1
+          } else {
+            polygon.position.set(24.599322892034973, -6.019497732554433)
+            polygon.rotation.z = -1.994077903661601
+          }
+          break;
+        case 'smallTriangle':
+          if (smallTriangleCount === 0) {
+            polygon.position.set(11.993835687996796, -0.5682255555855642)
+            polygon.rotation.z = 1.915140347823394
+            smallTriangleCount += 1
+          } else {
+            polygon.position.set(14.79895073744335, 12.530463600791704)
+            polygon.rotation.z = -0.32290721988959836
+          }
+        case 'mediumTriangle':
+          polygon.position.set(-14.47477365349403, -6.611277123827459)
+          polygon.rotation.z = -2.498864655040359
+          break;
+        case 'parallelogram':
+          polygon.position.set(-0.15885088312089946, 13.282581820531234)
+          polygon.rotation.z = 0.33977633377913374
+          break;
+      }
+
+      this.setSelectedPolygon(polygon)
+      this.updateSelectedPolygonPointsAndCheckCollisions()
+      this.removeSelectedPolygon()
+    })
   }
 
   setPointer(x, y) {
@@ -199,8 +273,6 @@ export default class extends Controller {
       if (!this.tangram.polygons.some((polygon) => polygon.userData.isColliding)) {
         this.checkPattern()
       }
-
-      // orbitControls.enabled = true
     }
   }
 
@@ -402,7 +474,7 @@ export default class extends Controller {
   revealPattern() {
     const pattern = {}
     this.tangram.polygons.forEach((polygon) => {
-      const roundedVertices = this.polygonVerticesToPatternRefLocal(polygon).map(([x, y]) => [roundAtTwoDecimal(x), roundAtTwoDecimal(y)])
+      const roundedVertices = this.polygonVerticesToPatternRefLocal(polygon).map(([x, y]) => [this.roundAtTwoDecimal(x), this.roundAtTwoDecimal(y)])
       if (polygon.userData.duplicated) {
         if (polygon.name in pattern) {
           pattern[polygon.name].push(roundedVertices)

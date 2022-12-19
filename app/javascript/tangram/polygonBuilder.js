@@ -29,20 +29,6 @@ export default ({ type, size, name, lightColor, darkColor, textureRepetition, du
   mainMesh.userData.type = 'main'
   mainMesh.castShadow = true;
 
-  // OUTLINE
-  const lineMaterial = new THREE.LineDashedMaterial({ color: 0xffffff, linewidth: 10, dashSize: 0.5, gapSize: 0.2 });
-  // const linePoints = [];
-  // linePoints.push(new THREE.Vector3(- 10, 0, 0));
-  // linePoints.push(new THREE.Vector3(0, 10, 0));
-  // linePoints.push(new THREE.Vector3(10, 0, 0));
-
-  const linePoints = points.map(([x, y]) => new THREE.Vector3(x, y, 0))
-  linePoints.push(new THREE.Vector3(points[0][0], points[0][1], 0))
-  const lineGeometry = new THREE.BufferGeometry().setFromPoints(linePoints);
-  // const lineGeometry = new THREE.ShapeGeometry(shape)
-  const line = new THREE.Line(lineGeometry, lineMaterial);
-  line.computeLineDistances()
-
   // POLYGON
   const polygon = new THREE.Group()
   polygon.userData = {
@@ -52,8 +38,6 @@ export default ({ type, size, name, lightColor, darkColor, textureRepetition, du
   polygon.name = name
   polygon.add(topMesh)
   polygon.add(mainMesh)
-  // polygon.position.z += 5
-  // polygon.add(line)
 
   centerPolygon(polygon, size)
   addCollisionPointsToPolygon(polygon, points, size)

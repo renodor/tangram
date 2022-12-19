@@ -17,13 +17,17 @@
       margin: 50px;
       border-radius: $border-radius;
       flex-direction: column;
+      row-gap: 25px;
       opacity: 0;
       transition: opacity 1s ease-in-out;
 
       .modal-title {
+        opacity: 0;
+        transition: opacity 1s ease-in-out 6s;
         h1 {
           color: $color-primary;
           font-weight: 400;
+          margin: 0
         }
       }
 
@@ -31,7 +35,7 @@
         svg {
           width: 200px;
           height: 200px;
-          animation: 2s ease-in-out 3.5s scale-in-wobble;
+          animation: .8s ease-in-out 5s wobble;
           path {
             opacity: 0;
             transform-origin: center;
@@ -39,31 +43,31 @@
 
           #bigTriangle {
             fill: #2f4e54;
-            animation: 1s ease-in-out 1s forwards fade-in;
+            animation: 1s ease-in-out 1s forwards fade-in, 1s ease-in-out 2.5s forwards fill-color;
           }
           #bigTriangle-2 {
             fill: #2f4e54;
-            animation: 1s ease-in-out 1.25s forwards fade-in;
+            animation: 1s ease-in-out 1.25s forwards fade-in, 1s ease-in-out 2.75s forwards fill-color;
           }
           #mediumTriangle {
             fill: #b3c6c6;
-            animation: 1s ease-in-out 1.5s forwards fade-in;
+            animation: 1s ease-in-out 1.5s forwards fade-in, 1s ease-in-out 3s forwards fill-color;
           }
           #smallTriangle {
             fill: #7a9e9f;
-            animation: 1s ease-in-out 1.75s forwards fade-in;
+            animation: 1s ease-in-out 1.75s forwards fade-in, 1s ease-in-out 3.25s forwards fill-color;
           }
           #smallTriangle-2 {
             fill: #7a9e9f;
-            animation: 1s ease-in-out 2s forwards fade-in;
+            animation: 1s ease-in-out 2s forwards fade-in, 1s ease-in-out 3.5s forwards fill-color;
           }
           #cube {
             fill: #a07178;
-            animation: 1s ease-in-out 2.25s forwards fade-in;
+            animation: 1s ease-in-out 2.25s forwards fade-in, 1s ease-in-out 3.75s forwards fill-color;
           }
           #parallelogram {
             fill: #f7e8a4;
-            animation: 1s ease-in-out 2.5s forwards fade-in;
+            animation: 1s ease-in-out 2.5s forwards fade-in, 1s ease-in-out 4s forwards fill-color;
           }
         }
       }
@@ -71,6 +75,9 @@
       .modal-buttons {
         display: flex;
         column-gap: 10px;
+        opacity: 0;
+        transition: opacity 1s ease-in-out 7s;
+        margin-top: 20px;
       }
     }
   }
@@ -80,6 +87,14 @@
 
     .winning-modal .modal-content {
       opacity: 1;
+
+      .modal-title {
+        opacity: 1;
+      }
+
+      .modal-buttons {
+        opacity: 1
+      }
     }
   }
 }
@@ -94,56 +109,58 @@
   }
 }
 
-@keyframes scale-in-wobble {
+@keyframes fill-color {
+  100% {
+    fill: $color-primary;
+  }
+}
+
+@keyframes wobble {
   0% {
-    transform: scale(100%);
+    transform: translate(0);
   }
 
   20% {
-    transform: scale(0);
+    transform: translate(-10px);
   }
 
   40% {
-    transform: scale(0);
+    transform: translate(10px);
   }
 
   50% {
-    transform: rotate(30deg) scale(130%);
+    transform: translate(-5px);
   }
 
   60% {
-    transform: rotate(-30deg);
+    transform: translate(5px);
+  }
+
+  65% {
+    transform: translate(-2.5px);
   }
 
   70% {
-    transform: rotate(30deg);
+    transform: translate(2.5px);
   }
 
   75% {
-    transform: rotate(-20deg);
+    transform: translate(-1px);
   }
 
   80% {
-    transform: rotate(20deg);
+    transform: translate(1px);
   }
 
   85% {
-    transform: rotate(-10deg);
+    transform: translate(-0.5px);
   }
 
-  90% {
-    transform: rotate(10deg);
-  }
-
-  94% {
-    transform: rotate(-5deg);
-  }
-
-  98% {
-    transform: rotate(5deg);
+  95% {
+    transform: translate(0.5px);
   }
 
   100% {
-    transform: rotate(0) scale(100%);
+    transform: translate(0);
   }
 }
