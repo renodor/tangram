@@ -101,49 +101,7 @@ export default class extends Controller {
       console.log(JSON.stringify(this.revealPattern()))
     });
 
-    this.tangram.cube.position.set(-0.1043734311668123, 1.21865161319267)
-    this.tangram.cube.rotation.z = -0.8134103462697739
-    this.setSelectedPolygon(this.tangram.cube)
-    this.updateSelectedPolygonPointsAndCheckCollisions()
-    this.removeSelectedPolygon()
-
-    this.tangram.bigTriangle1.position.set(-20.36165560764941, 6.96388943681312)
-    this.tangram.bigTriangle1.rotation.z = 6.519747708306367
-    this.setSelectedPolygon(this.tangram.bigTriangle1)
-    this.updateSelectedPolygonPointsAndCheckCollisions()
-    this.removeSelectedPolygon()
-
-    this.tangram.bigTriangle2.position.set(24.599322892034973, -6.019497732554433)
-    this.tangram.bigTriangle2.rotation.z = -1.994077903661601
-    this.setSelectedPolygon(this.tangram.bigTriangle2)
-    this.updateSelectedPolygonPointsAndCheckCollisions()
-    this.removeSelectedPolygon()
-
-    this.tangram.smallTriangle1.position.set(11.993835687996796, -0.5682255555855642)
-    this.tangram.smallTriangle1.rotation.z = 1.915140347823394
-    this.setSelectedPolygon(this.tangram.smallTriangle1)
-    this.updateSelectedPolygonPointsAndCheckCollisions()
-    this.removeSelectedPolygon()
-
-    this.tangram.smallTriangle2.position.set(14.79895073744335, 12.530463600791704)
-    this.tangram.smallTriangle2.rotation.z = -0.32290721988959836
-    this.setSelectedPolygon(this.tangram.smallTriangle2)
-    this.updateSelectedPolygonPointsAndCheckCollisions()
-    this.removeSelectedPolygon()
-
-    this.tangram.mediumTriangle.position.set(-14.47477365349403, -6.611277123827459)
-    this.tangram.mediumTriangle.rotation.z = -2.498864655040359
-    this.setSelectedPolygon(this.tangram.mediumTriangle)
-    this.updateSelectedPolygonPointsAndCheckCollisions()
-    this.removeSelectedPolygon()
-
-    this.tangram.parallelogram.position.set(-0.15885088312089946, 13.282581820531234)
-    this.tangram.parallelogram.rotation.z = 0.33977633377913374
-    this.setSelectedPolygon(this.tangram.parallelogram)
-    this.updateSelectedPolygonPointsAndCheckCollisions()
-    this.removeSelectedPolygon()
-
-    // this.setInitialPositions()
+    this.setInitialPositions()
 
     this.animate();
   }
@@ -163,6 +121,7 @@ export default class extends Controller {
         case 'cube':
           polygon.position.set(-0.1043734311668123, 1.21865161319267)
           polygon.rotation.z = -0.8134103462697739
+          break;
         case 'bigTriangle':
           if (bigTriangleCount === 0) {
             polygon.position.set(-20.36165560764941, 6.96388943681312)
@@ -182,6 +141,7 @@ export default class extends Controller {
             polygon.position.set(14.79895073744335, 12.530463600791704)
             polygon.rotation.z = -0.32290721988959836
           }
+          break;
         case 'mediumTriangle':
           polygon.position.set(-14.47477365349403, -6.611277123827459)
           polygon.rotation.z = -2.498864655040359
@@ -214,7 +174,6 @@ export default class extends Controller {
   }
 
   removeSelectedPolygon() {
-    this.selectedPolygon.position.z = 0
     this.findTop(this.selectedPolygon).material.opacity = 0
     this.selectedPolygon = null
   }
@@ -446,7 +405,7 @@ export default class extends Controller {
       })
     })
 
-    if (!polygonsMatchPattern) {
+    if (polygonsMatchPattern) {
       console.log(`Bravo you found a pattern!`)
 
       if (!this.currentPatternSolvedValue) {
