@@ -13,6 +13,7 @@
     .modal-content {
       width: 80%;
       height: 70%;
+      position: relative;
       background-color: white;
       margin: 50px;
       border-radius: $border-radius;
@@ -20,6 +21,28 @@
       row-gap: 25px;
       opacity: 0;
       transition: opacity 1s ease-in-out;
+
+      .modal-close {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 20px 25px;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 1s ease-in-out 7s;
+
+        svg {
+          width: 35px;
+          height: 35px;
+          fill: $light-gray;
+          transition: fill .5s ease;
+        }
+
+        &:hover svg {
+          fill: $color-primary
+        }
+
+      }
 
       .modal-title {
         opacity: 0;
@@ -88,6 +111,10 @@
     .winning-modal .modal-content {
       opacity: 1;
 
+      .modal-close {
+        opacity: 1;
+      }
+
       .modal-title {
         opacity: 1;
       }
@@ -112,55 +139,5 @@
 @keyframes fill-color {
   100% {
     fill: $color-primary;
-  }
-}
-
-@keyframes wobble {
-  0% {
-    transform: translate(0);
-  }
-
-  20% {
-    transform: translate(-10px);
-  }
-
-  40% {
-    transform: translate(10px);
-  }
-
-  50% {
-    transform: translate(-5px);
-  }
-
-  60% {
-    transform: translate(5px);
-  }
-
-  65% {
-    transform: translate(-2.5px);
-  }
-
-  70% {
-    transform: translate(2.5px);
-  }
-
-  75% {
-    transform: translate(-1px);
-  }
-
-  80% {
-    transform: translate(1px);
-  }
-
-  85% {
-    transform: translate(-0.5px);
-  }
-
-  95% {
-    transform: translate(0.5px);
-  }
-
-  100% {
-    transform: translate(0);
   }
 }

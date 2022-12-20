@@ -8,7 +8,7 @@ export default class extends Controller {
   }
 
   changeCurrentPattern(event) {
-    const newSelectedPattern = event.currentTarget
+    const newSelectedPattern = event.type == 'winning-modal:continue' ? event.detail.pattern : event.currentTarget
     const { id, solved } = newSelectedPattern.dataset
 
     this.currentSelectedPattern().dataset.selected = false
@@ -27,7 +27,7 @@ export default class extends Controller {
     })
   }
 
-  solveCurrentPattern() {
+  solveCurrentPatternForTheFirstTime() {
     fetch(`/patterns/${this.currentPatternTarget.dataset.id}/filled_svg`)
       .then((response) => response.text())
       .then((svgTag) => {
@@ -38,6 +38,13 @@ export default class extends Controller {
         currentSelectedPattern.dataset.solved = true
         currentSelectedPattern.innerHTML = svgTag
       })
+  }
+
+  solveCurrentPattern() {
+    this.currentPatternTarget.dataset.animated = true
+    setTimeout(() => {
+      this.currentPatternTarget.dataset.animated = false
+    }, 1000);
   }
 
   async toggleRevealPattern() {

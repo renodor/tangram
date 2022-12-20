@@ -56,4 +56,10 @@
       }
     }
   }
+
+  &[data-animated=true] {
+    .pattern-svg svg {
+      animation: .8s ease-in-out wobble;
+    }
+  }
 }

@@ -419,10 +419,11 @@ export default class extends Controller {
           }
         )
         .then((response) => response.text())
-        .then((svgTag) => this.dispatch('newSolvedPattern', { detail: { svgTag } }))
+        .then((svgTag) => this.dispatch('currentPatternSolvedForTheFirstTime', { detail: { svgTag } }))
 
+      } else {
+        this.dispatch('currentPatternSolved')
       }
-      this.dispatch('currentPatternSolved', { detail: { hey: "you" }})
     }
   }
 
