@@ -8,10 +8,21 @@
     flex-direction: column;
     row-gap: 10px;
     width: 400px;
+    margin: 20px 0;
 
     input {
       width: 100%;
       padding: 10px;
+      font-size: 16px;
     }
+
+    .button {
+      padding: 15px 10px;
+      font-size: 16px;
+    }
+  }
+
+  a {
+    color: $color-primary
   }
 }
