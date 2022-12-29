@@ -2,6 +2,7 @@
   position: absolute;
   right: 0;
   padding: 5px 15px;
+  z-index: 10;
   cursor: pointer;
   svg {
     fill: $color-primary;
@@ -16,7 +17,7 @@
   }
 }
 
-.modal-container {
+.help-modal-container {
   visibility: hidden;
 
   .help-modal {
@@ -28,10 +29,11 @@
     left: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.5);
+    z-index: 10;
 
     .modal-content {
-      width: 80%;
-      height: 70%;
+      width: 100%;
+      height: 90%;
       position: relative;
       background-color: white;
       margin: 50px;
@@ -81,5 +83,11 @@
     }
   }
 
+  &[data-open=true] {
+    visibility: visible;
 
+    .help-modal .modal-content {
+      opacity: 1;
+    }
+  }
 }

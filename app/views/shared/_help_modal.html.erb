@@ -1,14 +1,15 @@
-<div
-  data-controller="help-modal"
-  data-open="false"
->
+<div data-controller="help-modal">
   <div
     class="help-modal-trigger"
     data-action="click->help-modal#open"
   >
     <%= svg 'icons/help.svg' %>
   </div>
-  <div class="modal-container">
+  <div
+    class="help-modal-container"
+    data-help-modal-target="container"
+    data-open="false"
+  >
     <div class="help-modal centered-flexbox">
       <div class="modal-content centered-flexbox">
         <div class="modal-close" data-action="click->help-modal#close">
@@ -20,11 +21,9 @@
         <div class="modal-body">
           "Coucou"
         </div>
-        <div class="modal-buttons">
-          <button class="button primary" data-action="click->help-modal#close">
-            Continue
-          </button>
-        </div>
+        <button class="button primary" data-action="click->help-modal#close">
+          Continue
+        </button>
       </div>
     </div>
   </div>

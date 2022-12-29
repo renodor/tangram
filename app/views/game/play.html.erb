@@ -1,4 +1,5 @@
 <div id="game">
+  <%= render 'shared/help_modal' %>
   <canvas
     data-controller="game"
     data-action="patterns:currentPatternChanged@document->game#changeCurrentPattern"
