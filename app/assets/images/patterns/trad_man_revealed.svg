@@ -1,17 +1,9 @@
-<svg id="trad_man_revealed" xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">
-  <defs>
-    <style>
-      .cls-1 {
-        fill: #2c464b;
-      }
-    </style>
-  </defs>
-  <title>tangram</title>
-  <path id="smallTriangle" class="cls-1" d="M300.69,92.81,265,154.57l-61.75-35.66Z"/>
-  <path id="mediumTriangle" class="cls-1" d="M262.51,275H161.67V375.83Z"/>
-  <path id="parallelogram" class="cls-1" d="M273.36,275l-71.3,71.3h71.3L344.67,275Z"/>
-  <path id="smallTriangle-2" data-name="smallTriangle" class="cls-1" d="M218,427.65V499H289.3Z"/>
-  <path id="cube" class="cls-1" d="M202.06,425.29h71.3V354h-71.3Z"/>
-  <path id="bigTriangle" class="cls-1" d="M202.06,267.32H344.67L202.06,124.71Z"/>
-  <path id="bigTriangle-2" data-name="bigTriangle" class="cls-1" d="M347.41,72.35,223.9,1,152.59,124.55Z"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+  <path id="smallTriangle" d="M300.69,92.81,265,154.57l-61.75-35.66Z"/>
+  <path id="mediumTriangle" d="M262.51,275H161.67V375.83Z"/>
+  <path id="parallelogram" d="M273.36,275l-71.3,71.3h71.3L344.67,275Z"/>
+  <path id="smallTriangle-2" d="M218,427.65V499H289.3Z"/>
+  <path id="cube" d="M202.06,425.29h71.3V354h-71.3Z"/>
+  <path id="bigTriangle" d="M202.06,267.32H344.67L202.06,124.71Z"/>
+  <path id="bigTriangle-2" d="M347.41,72.35,223.9,1,152.59,124.55Z"/>
 </svg>

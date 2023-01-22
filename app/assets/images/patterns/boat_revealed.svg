@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+  <path id="mediumTriangle" d="M180.47,338.57l90.36,90.36,90.36-90.36Z"/>
+  <path id="parallelogram" d="M78.72,338.57l90.36,90.36h90.35l-90.35-90.36Z"/>
+  <path id="smallTriangle" d="M109.3,238.56l-3.41,90.3L15.6,325.45Z"/>
+  <path id="smallTriangle-2" d="M118.2,230.72l90.29,3.41,3.41-90.3Z"/>
+  <path id="cube" d="M118.2,238.72,114.8,329l90.29,3.41,3.4-90.29Z"/>
+  <path id="bigTriangle" d="M345.39,193.36l-133-122.29,10.75,255.34Z"/>
+  <path id="bigTriangle-2" d="M484.4,321l-133-122.3-122.29,133Z"/>
+</svg>

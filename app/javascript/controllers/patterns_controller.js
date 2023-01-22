@@ -8,7 +8,6 @@ export default class extends Controller {
   }
 
   changeCurrentPattern(event) {
-    console.log('hehehe')
     const newSelectedPattern = event.type == 'winning-modal:continue' ? event.detail.pattern : event.currentTarget
     const { id, solved } = newSelectedPattern.dataset
 
