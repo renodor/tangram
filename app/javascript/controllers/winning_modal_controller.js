@@ -1,15 +1,21 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ['body']
+  static targets = ['body', 'background']
+
+  open({ detail: { svgTag } }) {
+    this.bodyTarget.innerHTML = svgTag
+    this.element.dataset.open = true
+  }
 
   close() {
     this.element.dataset.open = false
   }
 
-  open({ detail: { svgTag } }) {
-    this.bodyTarget.innerHTML = svgTag
-    this.element.dataset.open = true
+  maybeClose(event) {
+    if (event.target == this.backgroundTarget) {
+      this.close()
+    }
   }
 
   closeAndContinue() {

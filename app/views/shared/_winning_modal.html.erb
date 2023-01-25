@@ -4,7 +4,11 @@
   data-action="game:currentPatternSolvedForTheFirstTime@document->winning-modal#open"
   data-open="false"
 >
-  <div class="winning-modal centered-flexbox">
+  <div
+    class="winning-modal centered-flexbox"
+    data-winning-modal-target="background"
+    data-action="click->winning-modal#maybeClose"
+  >
     <div class="modal-content centered-flexbox">
       <div class="modal-close" data-action="click->winning-modal#close">
         <%= svg 'icons/cross.svg' %>

@@ -9,8 +9,12 @@
     class="help-modal-container"
     data-help-modal-target="container"
     data-open="false"
+    data-action="click->help-modal#maybeClose"
   >
-    <div class="help-modal centered-flexbox">
+    <div
+      class="help-modal centered-flexbox"
+      data-help-modal-target="background"
+    >
       <div class="modal-content">
         <div class="modal-title">
           <h1>How to play?</h1>
