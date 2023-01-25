@@ -11,7 +11,7 @@
     background-color: rgba(0, 0, 0, 0.5);
 
     .modal-content {
-      width: 80%;
+      max-width: 870px;
       height: 70%;
       position: relative;
       background-color: white;
@@ -34,7 +34,7 @@
         svg {
           width: 35px;
           height: 35px;
-          fill: $light-gray;
+          fill: $color-light-gray;
           transition: fill .5s ease;
         }
 

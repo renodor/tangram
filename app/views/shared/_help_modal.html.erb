@@ -11,19 +11,58 @@
     data-open="false"
   >
     <div class="help-modal centered-flexbox">
-      <div class="modal-content centered-flexbox">
+      <div class="modal-content">
         <div class="modal-close" data-action="click->help-modal#close">
           <%= svg 'icons/cross.svg' %>
         </div>
         <div class="modal-title">
-          <h1>You're a Boss!</h1>
+          <h1>How to play?</h1>
         </div>
         <div class="modal-body">
-          "Coucou"
+          <h3>1. First select a pattern you want to solve</h3>
+          <div class="help-modal-blocks">
+            <div class="help-modal-block">
+              <p>Unsolved patterns are outlined</p>
+              <%= svg 'help/sitted_man_outlined.svg' %>
+            </div>
+            <div class="help-modal-block">
+              <p>Already solved pattern are filled</p>
+              <%= svg 'help/sitted_man_filled.svg' %>
+            </div>
+          </div>
+
+          <p><h3>2. Then drag & drop polygons to solve new patterns</h3></p>
+          <div class="help-modal-blocks">
+            <div class="help-modal-block">
+              <p>Click/tap on a polygon to select it</p>
+              <%= svg 'help/select.svg' %>
+            </div>
+            <div class="help-modal-block">
+              <p>Drag polygon from center to move it</p>
+              <%= svg 'help/move.svg' %>
+            </div>
+            <div class="help-modal-block">
+              <p>Drag polygon from sides to rotate it</p>
+              <%= svg 'help/rotate.svg' %>
+            </div>
+            <div class="help-modal-block">
+              <p>Polygons can't overlap</p>
+              <%= svg 'help/overlap.svg' %>
+            </div>
+            <div class="help-modal-block">
+              <p>The parallelogram, (the yellow polygon), can be flipped over by double clicking/taping on it</p>
+              <%= svg 'help/flip.svg' %>
+            </div>
+          </div>
+
         </div>
-        <button class="button primary" data-action="click->help-modal#close">
-          Continue
-        </button>
+
+        <div class="modal-cta">
+          <p>Once you found a pattern solution, a winning message will be displayed!</p>
+          <button class="button primary" data-action="click->help-modal#close">
+            Let's go!
+          </button>
+        </div>
       </div>
     </div>
   </div>
