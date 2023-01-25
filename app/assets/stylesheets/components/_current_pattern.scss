@@ -1,12 +1,10 @@
 #current-pattern {
   position: absolute;
-  left: calc(100vw / 2 - 82px);
   bottom: 220px;
-  padding: 10px;
+  padding: 15px;
   border-radius: $border-radius;
   border: $border;
   background-color: rgba(255, 255, 255, 0.5);
-  padding: 15px;
 
   .pattern-svg svg {
     width: 130px;
