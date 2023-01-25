@@ -33,7 +33,7 @@
 
     .modal-content {
       max-width: 870px;
-      height: 90%;
+      max-height: 90%;
       position: relative;
       background-color: white;
       margin: 50px;
@@ -54,27 +54,6 @@
         background: $color-light-gray;
         border-radius: 10px;
         border: 7px solid white;
-      }
-
-      .modal-close {
-        position: absolute;
-        top: 0;
-        right: 0;
-        padding: 20px 25px;
-        cursor: pointer;
-        transition: opacity 1s ease-in-out 7s;
-
-        svg {
-          width: 35px;
-          height: 35px;
-          fill: $color-light-gray;
-          transition: fill .5s ease;
-        }
-
-        &:hover svg {
-          fill: $color-primary;
-        }
-
       }
 
       .modal-title {
@@ -132,8 +111,19 @@
   }
 }
 
-.image-placeholder {
-  background-color: $color-primary;
-  width: 100px;
-  height: 100px;
+@media (max-width: 575px) {
+  .help-modal-container .help-modal .modal-content {
+    margin: 10px;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 767px) {
+  .help-modal-container .help-modal .modal-content .modal-body .help-modal-blocks {
+    flex-direction: column;
+
+    .help-modal-block {
+      width: 100%;
+    }
+  }
 }
