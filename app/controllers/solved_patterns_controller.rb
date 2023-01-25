@@ -9,6 +9,9 @@ class SolvedPatternsController < ApplicationController
     SolvedPattern.create(user_id: current_user.id, pattern_id: params[:pattern_id])
 
     pattern = Pattern.find(params[:pattern_id])
-    render html: helpers.svg("patterns/#{pattern.name}_revealed.svg")
+    render json: {
+      pun: pattern.pun,
+      svgTag: helpers.svg("patterns/#{pattern.name}_revealed.svg")
+    }
   end
 end

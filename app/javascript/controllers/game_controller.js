@@ -405,7 +405,7 @@ export default class extends Controller {
       })
     })
 
-    if (polygonsMatchPattern) {
+    if (!polygonsMatchPattern) {
       console.log(`Bravo you found a pattern!`)
 
       if (!this.currentPatternSolvedValue) {
@@ -418,8 +418,8 @@ export default class extends Controller {
             body: JSON.stringify({ pattern_id: this.currentPatternIdValue })
           }
         )
-        .then((response) => response.text())
-        .then((svgTag) => this.dispatch('currentPatternSolvedForTheFirstTime', { detail: { svgTag } }))
+        .then((response) => response.json())
+        .then((payload) => this.dispatch('currentPatternSolvedForTheFirstTime', { detail: payload }))
 
       } else {
         this.dispatch('currentPatternSolved')

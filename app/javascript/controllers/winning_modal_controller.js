@@ -1,9 +1,10 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ['body', 'background']
+  static targets = ['body', 'title', 'background']
 
-  open({ detail: { svgTag } }) {
+  open({ detail: { svgTag, pun } }) {
+    this.titleTarget.innerHTML = pun
     this.bodyTarget.innerHTML = svgTag
     this.element.dataset.open = true
   }
