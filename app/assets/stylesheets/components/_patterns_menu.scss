@@ -4,6 +4,9 @@
     right: 0;
     bottom: 0;
     transition: bottom .5s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
     #hide-pattern-menu {
       display: flex;
@@ -24,17 +27,28 @@
     #patterns {
       margin: 0 50px 10px 50px;
       padding: 15px;
+      max-width: 1300px;
       background-color: white;
       display: flex;
-      column-gap: 10px;
+      column-gap: 50px;
       justify-content: space-between;
       overflow-x: auto;
       border-radius: $border-radius;
       border: $border;
+
+      &::-webkit-scrollbar {
+        height: 20px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: $color-secondary;
+        border-radius: 10px;
+        border: 7px solid white;
+      }
     }
 
     &.hidden {
-      bottom: -140px;
+      bottom: -155px;
 
       #hide-pattern-menu svg {
         transform: scale(1, -1);
