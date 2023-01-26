@@ -2,6 +2,7 @@
 
 Rails.application.routes.draw do
   devise_for :users
+  get '/sign_in_demo_user', to: 'game#sign_in_demo_user'
 
   root 'game#play'
 

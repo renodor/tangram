@@ -1,0 +1,10 @@
+<% flash.each do |flash_type, message| %>
+  <div data-controller="flash" class="flash <%= flash_type %>">
+    <div class="message">
+      <span><%= message %></span>
+    </div>
+    <div data-action="click->flash#close" class="close">
+      <%= svg "icons/cross.svg" %>
+    </div>
+  </div>
+<% end %>

@@ -1,0 +1,6 @@
+<div id="nav" class="centered-flexbox" style="position: <%= first_time_login ? 'static' : 'absolute' %>">
+  <%= render 'shared/help_modal', first_time_login: first_time_login %>
+  <div>
+    <%= button_to "Logout", destroy_user_session_path, method: "delete", class: "logout"  %>
+  </div>
+</div>

@@ -7,6 +7,8 @@ class Pattern < ApplicationRecord
 
   validates :name, presence: true
 
+  scope :ordered, -> { order(:order) }
+
   def points_by_polygons_shape
     points = {}
     polygons.select(:shape, :points).each do |polygon|

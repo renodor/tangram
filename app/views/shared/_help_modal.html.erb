@@ -3,12 +3,12 @@
     class="help-modal-trigger"
     data-action="click->help-modal#open"
   >
-    <%= svg 'icons/help.svg' %>
+    <span>How to play?</span>
   </div>
   <div
     class="help-modal-container"
     data-help-modal-target="container"
-    data-open="false"
+    data-open="<%= first_time_login ? 'true' :  'false' %>"
     data-action="click->help-modal#maybeClose"
   >
     <div

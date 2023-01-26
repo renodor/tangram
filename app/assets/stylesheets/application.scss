@@ -3,6 +3,7 @@
 
 @import 'layouts/game';
 
+@import 'components/nav';
 @import 'components/patterns_menu';
 @import 'components/pattern';
 @import 'components/current_pattern';
@@ -10,6 +11,7 @@
 @import 'components/winning_modal';
 @import 'components/button';
 @import 'components/login_form';
+@import 'components/flash';
 
 *,
 *::before,

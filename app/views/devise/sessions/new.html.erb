@@ -1,17 +1,23 @@
-<div class="login-form">
-  <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-    <div class="field">
-      <%= f.email_field :email, placeholder: 'Email', autofocus: true, autocomplete: "email" %>
-    </div>
+<div class="login-form-container">
+  <div class="login-form">
+    <%= form_for(resource, as: resource_name, url: session_path(resource_name), data: { turbo: false }) do |f| %>
+      <div class="field">
+        <%= f.email_field :email, placeholder: 'Email', autofocus: true, autocomplete: "email" %>
+      </div>
 
-    <div class="field">
-      <%= f.password_field :password, placeholder: 'Password', autocomplete: "current-password" %>
-    </div>
+      <div class="field">
+        <%= f.password_field :password, placeholder: 'Password', autocomplete: "current-password" %>
+      </div>
 
-    <div class="actions">
-      <%= f.submit "Log in", class: 'button primary' %>
-    </div>
-  <% end %>
+      <div class="actions">
+        <%= f.submit "Login", class: 'button primary' %>
+        <p><%= link_to "Create Account", new_user_registration_path %></p>
+      </div>
 
-  <%= render "devise/shared/links" %>
+       <%= render "devise/shared/error_messages", resource: resource %>
+    <% end %>
+
+    <%= link_to 'PLAY WITH DEMO ACCOUNT', sign_in_demo_user_path, class: 'button secondary' %>
+  </div>
+
 </div>

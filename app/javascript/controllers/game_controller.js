@@ -72,9 +72,12 @@ export default class extends Controller {
     })
 
     // Controls
-    // const orbitControls = new OrbitControls(this.camera, this.renderer.domElement)
-    // orbitControls.enableRotate = false
-    // orbitControls.mouseButtons['LEFT'] = THREE.MOUSE.PAN
+    this.orbitControls = new OrbitControls(this.camera, this.renderer.domElement)
+    this.orbitControls.enableRotate = false
+    this.orbitControls.enablePan = false
+    this.orbitControls.maxDistance = 100;
+    this.orbitControls.minDistance = 50;
+    // this.orbitControls.mouseButtons['LEFT'] = THREE.MOUSE.PAN
 
     // Collision
     this.coordinate = new THREE.Vector3()
@@ -108,7 +111,7 @@ export default class extends Controller {
 
   animate() {
     requestAnimationFrame(this.animate.bind(this))
-    // orbitControls.update()
+    this.orbitControls.update()
     this.renderer.render(this.scene, this.camera)
   }
 
@@ -405,7 +408,7 @@ export default class extends Controller {
       })
     })
 
-    if (!polygonsMatchPattern) {
+    if (polygonsMatchPattern) {
       console.log(`Bravo you found a pattern!`)
 
       if (!this.currentPatternSolvedValue) {
