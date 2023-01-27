@@ -101,7 +101,7 @@ export default class extends Controller {
     document.addEventListener('keyup', this.onKeyUp.bind(this))
 
     document.getElementById('pattern-reveal').addEventListener('click', event => {
-      console.log(JSON.stringify(this.revealPattern()))
+      console.log(this.createSolutionFromPolygons())
     });
 
     this.setInitialPositions()
@@ -436,22 +436,28 @@ export default class extends Controller {
     return Math.round((num + Number.EPSILON) * 100) / 100
   }
 
-  revealPattern() {
-    const pattern = {}
-    this.tangram.polygons.forEach((polygon) => {
+  createSolutionFromPolygons() {
+    const polygons = this.tangram.polygons.map((polygon) => {
       const roundedVertices = this.polygonVerticesToPatternRefLocal(polygon).map(([x, y]) => [this.roundAtTwoDecimal(x), this.roundAtTwoDecimal(y)])
-      if (polygon.userData.duplicated) {
-        if (polygon.name in pattern) {
-          pattern[polygon.name].push(roundedVertices)
-        } else {
-          pattern[polygon.name] = [roundedVertices]
-        }
-      } else {
-        pattern[polygon.name] = roundedVertices
+      return {
+        shape: polygon.name,
+        points: roundedVertices
       }
     })
 
-    return pattern
+    fetch(
+      `/solutions`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(
+          {
+            pattern_id: this.currentPatternIdValue,
+            polygons: polygons
+          }
+        )
+      }
+    )
   }
 
   flipPolygon(polygon) {

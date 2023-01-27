@@ -14,4 +14,5 @@ Rails.application.routes.draw do
   end
 
   resources :solved_patterns, only: :create
+  resources :solutions, only: :create
 end

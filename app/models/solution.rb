@@ -2,7 +2,7 @@
 
 class Solution < ApplicationRecord
   belongs_to :pattern
-  has_many :polygons
+  has_many :polygons, dependent: :destroy
 
   def points_by_polygons_shape
     points = {}

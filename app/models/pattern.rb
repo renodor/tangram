@@ -1,8 +1,8 @@
 # frozen_string_literal:true
 
 class Pattern < ApplicationRecord
-  has_many :solutions
-  has_many :solved_patterns
+  has_many :solutions, dependent: :destroy
+  has_many :solved_patterns, dependent: :destroy
   has_many :users, through: :solved_patterns
 
   validates :name, presence: true
