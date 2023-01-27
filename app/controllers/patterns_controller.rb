@@ -4,7 +4,7 @@ class PatternsController < ApplicationController
   def show
     pattern = Pattern.find(params[:id])
     render json: {
-      polygons: pattern.points_by_polygons_shape,
+      solutions: pattern.solutions.map(&:points_by_polygons_shape),
       solved: pattern.solved?(current_user)
     }
   end

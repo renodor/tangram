@@ -13,7 +13,7 @@ export default class extends Controller {
 
   connect() {
     this.initAndPlay(this.element)
-    this.currentPatternPolygons // not a "value" because we don't want to expose that has a HTML data attribute...
+    this.currentPatternSolutions // not a "value" because we don't want to expose that has a HTML data attribute...
   }
 
   changeCurrentPattern({ detail: { id, solved } }) {
@@ -24,8 +24,8 @@ export default class extends Controller {
   currentPatternIdValueChanged() {
     fetch(`/patterns/${this.currentPatternIdValue}`, { headers: { 'accept': 'application/json' } })
       .then((response) => response.json())
-      .then(({ polygons, solved }) => {
-        this.currentPatternPolygons = polygons
+      .then(({ solutions, solved }) => {
+        this.currentPatternSolutions = solutions
         this.currentPatternSolvedValue = solved
       })
   }
@@ -373,42 +373,11 @@ export default class extends Controller {
   }
 
   checkPattern() {
-    this.comparePolygonsWitCurrentPatternPolygons()
-  }
-
-  comparePolygonsWitCurrentPatternPolygons() {
-    const polygonsMatchPattern = this.tangram.polygons.every((polygon) => {
-      if (polygon == this.patternRef) { return true }
-
-      return this.polygonVerticesToPatternRefLocal(polygon).every(([polygonX, polygonY], index) => {
-        if (polygon.userData.duplicated) {
-          return this.currentPatternPolygons[polygon.name].some((patternPoints) => {
-            const xDiff = Math.abs(polygonX - patternPoints[index][0])
-            const yDiff = Math.abs(polygonY - patternPoints[index][1])
-            return (xDiff <= 2) && (yDiff <= 2)
-          })
-        } else {
-          return this.currentPatternPolygons[polygon.name].some(([patternX, patternY]) => {
-            const xDiff = Math.abs(polygonX - patternX)
-            const yDiff = Math.abs(polygonY - patternY)
-
-            // console.log({
-            //   xDiff: xDiff,
-            //   yDiff: yDiff,
-            //   polygonX: polygonX,
-            //   polygonY: polygonY,
-            //   patternX: patternX,
-            //   patternY: this.currentPatternPolygons[polygon.name][index][1],
-            //   result: (xDiff <= 2) && (yDiff <= 2)
-            // })
-            return (xDiff <= 2) && (yDiff <= 2)
-          })
-
-        }
-      })
+    const polygonsMatchSolution = this.currentPatternSolutions.some((solution) => {
+      return this.comparePolygonsSolution(solution)
     })
 
-    if (polygonsMatchPattern) {
+    if (polygonsMatchSolution) {
       console.log(`Bravo you found a pattern!`)
 
       if (!this.currentPatternSolvedValue) {
@@ -421,13 +390,46 @@ export default class extends Controller {
             body: JSON.stringify({ pattern_id: this.currentPatternIdValue })
           }
         )
-        .then((response) => response.json())
-        .then((payload) => this.dispatch('currentPatternSolvedForTheFirstTime', { detail: payload }))
+          .then((response) => response.json())
+          .then((payload) => this.dispatch('currentPatternSolvedForTheFirstTime', { detail: payload }))
 
       } else {
         this.dispatch('currentPatternSolved')
       }
     }
+  }
+
+  comparePolygonsSolution(solution) {
+    return this.tangram.polygons.every((polygon) => {
+      if (polygon == this.patternRef) { return true }
+
+      return this.polygonVerticesToPatternRefLocal(polygon).every(([polygonX, polygonY], index) => {
+        if (polygon.userData.duplicated) {
+          return solution[polygon.name].some((patternPoints) => {
+            const xDiff = Math.abs(polygonX - patternPoints[index][0])
+            const yDiff = Math.abs(polygonY - patternPoints[index][1])
+            return (xDiff <= 2) && (yDiff <= 2)
+          })
+        } else {
+          return solution[polygon.name].some(([patternX, patternY]) => {
+            const xDiff = Math.abs(polygonX - patternX)
+            const yDiff = Math.abs(polygonY - patternY)
+
+            // console.log({
+            //   xDiff: xDiff,
+            //   yDiff: yDiff,
+            //   polygonX: polygonX,
+            //   polygonY: polygonY,
+            //   patternX: patternX,
+            //   patternY: solution[polygon.name][index][1],
+            //   result: (xDiff <= 2) && (yDiff <= 2)
+            // })
+            return (xDiff <= 2) && (yDiff <= 2)
+          })
+
+        }
+      })
+    })
   }
 
   roundAtTwoDecimal(num) {

@@ -1,7 +1,7 @@
 # frozen_string_literal:true
 
 class Polygon < ApplicationRecord
-  belongs_to :pattern
+  belongs_to :solution
 
   validates :shape, :points, presence: true
 

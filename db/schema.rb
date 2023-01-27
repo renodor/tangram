@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_26_165212) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_27_101349) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -27,8 +27,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_26_165212) do
     t.float "points", default: [], null: false, array: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "solution_id", null: false
+    t.index ["solution_id"], name: "index_polygons_on_solution_id"
+  end
+
+  create_table "solutions", force: :cascade do |t|
     t.bigint "pattern_id", null: false
-    t.index ["pattern_id"], name: "index_polygons_on_pattern_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["pattern_id"], name: "index_solutions_on_pattern_id"
   end
 
   create_table "solved_patterns", force: :cascade do |t|
@@ -53,7 +60,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_26_165212) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "polygons", "patterns"
+  add_foreign_key "polygons", "solutions"
+  add_foreign_key "solutions", "patterns"
   add_foreign_key "solved_patterns", "patterns"
   add_foreign_key "solved_patterns", "users"
 end
