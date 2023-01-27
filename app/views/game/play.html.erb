@@ -8,7 +8,10 @@
     data-game-current-pattern-solved-value="<%= @current_pattern.solved?(current_user) %>"
   >
   </canvas>
-  <button id="pattern-reveal">Create solution</button>
+
+  <% if current_user.admin? %>
+    <button id="create-solution" class="button secondary">Create solution</button>
+  <% end %>
 
   <div
     id="patterns-menu"

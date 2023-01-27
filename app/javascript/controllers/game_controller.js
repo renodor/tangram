@@ -100,8 +100,8 @@ export default class extends Controller {
     document.addEventListener('keydown', this.onKeyDown.bind(this))
     document.addEventListener('keyup', this.onKeyUp.bind(this))
 
-    document.getElementById('pattern-reveal').addEventListener('click', event => {
-      console.log(this.createSolutionFromPolygons())
+    document.getElementById('create-solution')?.addEventListener('click', () => {
+      this.createSolutionFromPolygons()
     });
 
     this.setInitialPositions()
@@ -432,8 +432,16 @@ export default class extends Controller {
     })
   }
 
-  roundAtTwoDecimal(num) {
-    return Math.round((num + Number.EPSILON) * 100) / 100
+  flipPolygon(polygon) {
+    polygon.scale.x *= -1
+  }
+
+  findTop(polygon) {
+    return polygon.children.find((child) => child.userData.type == 'top')
+  }
+
+  findMain(polygon) {
+    return polygon.children.find((child) => child.userData.type == 'main')
   }
 
   createSolutionFromPolygons() {
@@ -457,18 +465,16 @@ export default class extends Controller {
           }
         )
       }
-    )
+    ).then((response) => {
+      if (response.status == 201) {
+        console.log(`New solution created for current pattern (with id: ${this.currentPatternIdValue}`)
+      } else {
+        console.log(`Error: ${response.status}`)
+      }
+    })
   }
 
-  flipPolygon(polygon) {
-    polygon.scale.x *= -1
-  }
-
-  findTop(polygon) {
-    return polygon.children.find((child) => child.userData.type == 'top')
-  }
-
-  findMain(polygon) {
-    return polygon.children.find((child) => child.userData.type == 'main')
+  roundAtTwoDecimal(num) {
+    return Math.round((num + Number.EPSILON) * 100) / 100
   }
 }
