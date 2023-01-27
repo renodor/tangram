@@ -1,4 +1,4 @@
-<%= svg 'logo.svg' %>
+<%= render 'shared/logo' %>
 
 <div class="login-form-container">
   <div class="login-form">
@@ -12,11 +12,11 @@
       </div>
 
       <div class="actions">
-        <%= f.submit "Login", class: 'button primary' %>
-        <p><%= link_to "Create Account", new_user_registration_path %></p>
+        <%= f.submit 'Login', class: 'button primary' %>
+        <p><%= link_to 'Create Account', new_user_registration_path %></p>
       </div>
 
-       <%= render "devise/shared/error_messages", resource: resource %>
+       <%= render 'devise/shared/error_messages', resource: resource %>
     <% end %>
 
     <%= link_to 'PLAY WITH DEMO ACCOUNT', sign_in_demo_user_path, class: 'button secondary' %>

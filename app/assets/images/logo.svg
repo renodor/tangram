@@ -1,10 +1,9 @@
-<svg id="Logo" xmlns="http://www.w3.org/2000/svg" width="535.58" height="582.91" viewBox="0 0 535.58 582.91">
-  <title>tangram</title>
-  <path id="mediumTriangle" d="M289.62,232.9H417.41V360.68Z" style="fill: #9babab"/>
-  <path id="parallelogram" d="M193.84,9.34V137.12L257.73,201V73.23Z" style="fill: #d4c78e"/>
-  <path id="smallTriangle" d="M204.51,296.79l63.9-63.89L204.51,169Z" style="fill: #6c8a8b"/>
-  <path id="cube" d="M279,371.29l63.9-63.89L279,243.5l-63.89,63.9Z" style="fill: #8a6369"/>
-  <path id="bigTriangle" d="M225.73,445.79,353.51,573.57V318Z" style="fill: #2c464b"/>
-  <path id="bigTriangle-2" data-name="bigTriangle" d="M268.41,381.9,140.62,254.11,12.84,381.9Z" style="fill: #2c464b"/>
-  <path id="smallTriangle-2" data-name="smallTriangle" d="M432.39,288.55v90.36h90.35Z" style="fill: #6c8a8b"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 535.58 582.91">
+  <path id="mediumTriangle" d="M289.62,232.9H417.41V360.68Z" />
+  <path id="parallelogram" d="M193.84,9.34V137.12L257.73,201V73.23Z" />
+  <path id="smallTriangle" d="M204.51,296.79l63.9-63.89L204.51,169Z" />
+  <path id="cube" d="M279,371.29l63.9-63.89L279,243.5l-63.89,63.9Z" />
+  <path id="bigTriangle" d="M225.73,445.79,353.51,573.57V318Z" />
+  <path id="bigTriangle-2" data-name="bigTriangle" d="M268.41,381.9,140.62,254.11,12.84,381.9Z" />
+  <path id="smallTriangle-2" data-name="smallTriangle" d="M432.39,288.55v90.36h90.35Z" />
 </svg>

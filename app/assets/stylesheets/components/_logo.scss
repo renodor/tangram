@@ -1,0 +1,79 @@
+.logo {
+   margin: 50px 0;
+  svg {
+    width: 300px;
+    height: 300px;
+    animation: 48.1s steps(8, start) 6.1s infinite rotate;
+    path {
+      opacity: 0;
+      transform-origin: center;
+    }
+
+    #bigTriangle {
+      fill: #2f4e54;
+      animation: 6s ease-in-out 1s infinite forwards infinite-fade
+    }
+
+    #bigTriangle-2 {
+      fill: #2f4e54;
+      animation: 6s ease-in-out 1.25s infinite forwards infinite-fade
+    }
+
+    #smallTriangle {
+      fill: #7a9e9f;
+      animation: 6s ease-in-out 1.5s infinite forwards infinite-fade
+    }
+
+    #parallelogram {
+      fill: #f7e8a4;
+      animation: 6s ease-in-out 1.75s infinite forwards infinite-fade
+    }
+
+    #mediumTriangle {
+      fill: #b3c6c6;
+      animation: 6s ease-in-out 2s infinite forwards infinite-fade
+    }
+
+    #smallTriangle-2 {
+      fill: #7a9e9f;
+      animation: 6s ease-in-out 2.25s infinite forwards infinite-fade
+    }
+
+    #cube {
+      fill: #a07178;
+      animation: 6s ease-in-out 2.5s infinite forwards infinite-fade
+    }
+  }
+}
+
+@keyframes infinite-fade {
+  0% {
+    opacity: 0;
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  60% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
