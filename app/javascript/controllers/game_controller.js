@@ -1,9 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
-// import { initAndPlay } from '../tangram/game'
 
-// import * as THREE from 'three';
-// import { OrbitControls } from 'three-orbit-controls';
-// import Tangram from '../tangram/tangram.js'
+import * as THREE from 'three';
+import { OrbitControls } from 'three-orbit-controls';
+import Tangram from "tangram";
 
 export default class extends Controller {
   static values = {

@@ -1,4 +1,4 @@
-import polygonBuilder from './polygonBuilder.js'
+import polygonBuilder from 'polygonBuilder'
 
 // For unit == 20 this will build the following polygons:
 // - cube: 7.0710678118654755 sides
