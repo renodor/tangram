@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export default ({ type, size, name, lightColor, darkColor, textureRepetition, duplicated }) => {
+export default ({ type, size, name, lightColor, darkColor, texturePath, textureRepetition, duplicated }) => {
   // const hypotenuse = size * Math.sqrt(2)
 
   // SHAPE
@@ -20,7 +20,7 @@ export default ({ type, size, name, lightColor, darkColor, textureRepetition, du
 
   // MAIN
   const mainGeometry = new THREE.ExtrudeGeometry(shape, { depth: 0.1, bevelEnabled: false });
-  const texture = new THREE.TextureLoader().load(`/assets/textures/${name}.jpg`);
+  const texture = new THREE.TextureLoader().load(texturePath);
   texture.wrapS = THREE.RepeatWrapping;
   texture.wrapT = THREE.RepeatWrapping;
   texture.repeat.set(textureRepetition, textureRepetition);

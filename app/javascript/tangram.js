@@ -7,8 +7,9 @@ import polygonBuilder from 'polygonBuilder'
 // - small triangle: 10 hypotenuse / 7.0710678118654755 side / 7.0710678118654755 altitude
 
 export default class Tangram {
-  constructor(unit) {
+  constructor(unit, textures) {
     this.unit = unit;
+    this.textures = textures;
     this.cube = this.buildCube()
     this.bigTriangle1 = this.buildTriangle('bigTriangle', this.unit, 0x2f4e54, 0x223D42, 0.15, true)
     this.bigTriangle2 = this.buildTriangle('bigTriangle', this.unit, 0x2f4e54, 0x223D42, 0.15, true)
@@ -25,6 +26,7 @@ export default class Tangram {
       size: this.unit * Math.sqrt(2) / 4,
       lightColor: 0xA07178,
       darkColor: 0x91676c,
+      texturePath: this.textures.cube,
       textureRepetition: 0.09,
       duplicated: false
     })
@@ -33,12 +35,13 @@ export default class Tangram {
   buildTriangle(name, size, lightColor, darkColor, textureRepetition, duplicated) {
     return polygonBuilder({
       type: 'triangle',
-      name: name,
-      size: size,
-      lightColor: lightColor,
-      darkColor: darkColor,
-      textureRepetition: textureRepetition,
-      duplicated: duplicated
+      name,
+      size,
+      lightColor,
+      darkColor,
+      texturePath: this.textures[name],
+      textureRepetition,
+      duplicated
     })
   }
 
@@ -49,6 +52,7 @@ export default class Tangram {
       size: this.unit / 2,
       lightColor: 0xF7E8A4,
       darkColor: 0xd8cb91,
+      texturePath: this.textures.parallelogram,
       textureRepetition: 0.15,
       duplicated: false
     })

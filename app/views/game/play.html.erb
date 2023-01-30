@@ -6,6 +6,7 @@
     data-action="patterns:currentPatternChanged@document->game#changeCurrentPattern"
     data-game-current-pattern-id-value="<%= @current_pattern.id %>"
     data-game-current-pattern-solved-value="<%= @current_pattern.solved?(current_user) %>"
+    data-game-textures-value="<%= @textures.to_json %>"
   >
   </canvas>
 

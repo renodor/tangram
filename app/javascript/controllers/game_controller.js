@@ -6,6 +6,7 @@ import Tangram from 'tangram';
 
 export default class extends Controller {
   static values = {
+    textures: Object,
     currentPatternId: Number,
     currentPatternSolved: Boolean
   }
@@ -62,7 +63,7 @@ export default class extends Controller {
     planeMesh.receiveShadow = true
     this.scene.add(planeMesh);
 
-    this.tangram = new Tangram(20)
+    this.tangram = new Tangram(20, this.texturesValue);
     this.patternRef = this.tangram.mediumTriangle
 
     this.tangram.polygons.forEach((polygon, index) => {

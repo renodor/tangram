@@ -6,6 +6,10 @@ class GameController < ApplicationController
   def play
     @patterns = Pattern.ordered
     @current_pattern = @patterns.sample
+    @textures = Polygon.shapes.keys.each_with_object({}) do |shape, hash|
+      camelized_name = shape.camelize(:lower)
+      hash[camelized_name] = helpers.image_path("textures/#{camelized_name}.jpg")
+    end
 
     user_is_demo_user = current_user == User.demo_user
     @first_time_login = user_is_demo_user || current_user.first_time_login
