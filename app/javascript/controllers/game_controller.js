@@ -74,10 +74,21 @@ export default class extends Controller {
     // Controls
     this.orbitControls = new OrbitControls(this.camera, this.renderer.domElement)
     this.orbitControls.enableRotate = false
-    this.orbitControls.enablePan = false
     this.orbitControls.maxDistance = 100;
-    this.orbitControls.minDistance = 50;
-    // this.orbitControls.mouseButtons['LEFT'] = THREE.MOUSE.PAN
+    this.orbitControls.minDistance = 20;
+    this.orbitControls.mouseButtons['LEFT'] = THREE.MOUSE.PAN
+    this.orbitControls.touches['ONE'] = THREE.TOUCH.PAN
+
+    const minPan = new THREE.Vector3(- 50, - 50, - 50);
+    const maxPan = new THREE.Vector3(50, 50, 50);
+    const orbitControlsFocusPoint = new THREE.Vector3();
+
+    this.orbitControls.addEventListener("change", () => {
+      orbitControlsFocusPoint.copy(this.orbitControls.target)
+      this.orbitControls.target.clamp(minPan, maxPan);
+      orbitControlsFocusPoint.sub(this.orbitControls.target);
+      this.camera.position.sub(orbitControlsFocusPoint);
+    })
 
     // Collision
     this.coordinate = new THREE.Vector3()
@@ -207,7 +218,7 @@ export default class extends Controller {
     const polygonIntersection = this.raycaster.intersectObjects(this.tangram.polygons)[0];
 
     if (polygonIntersection) {
-      // orbitControls.enabled = false
+      this.orbitControls.enabled = false
 
       const movementType = polygonIntersection.object.userData.type == 'top' ? 'drag' : 'rotate'
 
@@ -234,6 +245,8 @@ export default class extends Controller {
         this.checkPattern()
       }
     }
+
+    this.orbitControls.enabled = true
   }
 
   onPointerMove(event) {
