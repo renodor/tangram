@@ -97,8 +97,6 @@ export default class extends Controller {
     canvas.addEventListener('pointerdown', this.onPointerDown.bind(this))
     canvas.addEventListener('pointerup', this.onPointerUp.bind(this))
     canvas.addEventListener('dblclick', this.onDoubleClick.bind(this))
-    document.addEventListener('keydown', this.onKeyDown.bind(this))
-    document.addEventListener('keyup', this.onKeyUp.bind(this))
 
     document.getElementById('create-solution')?.addEventListener('click', () => {
       this.createSolutionFromPolygons()
@@ -248,52 +246,6 @@ export default class extends Controller {
       this.dragObject(this.planeIntersectionPoint)
     } else {
       this.rotateObject(this.planeIntersectionPoint)
-    }
-  }
-
-  onKeyDown(event) {
-    if (event.key === 'n') {
-      const currentSelectedPolygonIndex = this.selectedPolygon?.userData?.index || 0
-      this.setSelectedPolygon(this.tangram.polygons[currentSelectedPolygonIndex + 1] || this.tangram.polygons[0])
-    } else if (this.selectedPolygon) {
-      switch (event.key) {
-        case "ArrowLeft":
-          this.selectedPolygon.position.x -= 0.2
-          break;
-        case "ArrowRight":
-          this.selectedPolygon.position.x += 0.2
-          break;
-        case "ArrowUp":
-          this.selectedPolygon.position.y += 0.2
-          break;
-        case "ArrowDown":
-          this.selectedPolygon.position.y -= 0.2
-          break;
-        case "r":
-          this.selectedPolygon.rotation.z += 0.1
-          break;
-        case "l":
-          this.selectedPolygon.rotation.z -= 0.1
-          break;
-        case "f":
-          if (this.selectedPolygon.name == 'parallelogram') {
-            this.flipPolygon(this.selectedPolygon)
-          }
-          break;
-        case 'Escape':
-          this.removeSelectedPolygon(this.selectedPolygon)
-          break;
-      }
-    }
-  }
-
-  onKeyUp() {
-    if (this.selectedPolygon) {
-      this.updateSelectedPolygonPointsAndCheckCollisions()
-
-      if (!this.tangram.polygons.some((polygon) => polygon.userData.isColliding)) {
-        this.checkPattern()
-      }
     }
   }
 
