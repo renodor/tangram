@@ -1,0 +1,15 @@
+#full-screen {
+  .enabled-text {
+    display: none;
+  }
+
+  &.enabled {
+    .disabled-text {
+      display: none;
+    }
+
+    .enabled-text {
+      display: inline;
+    }
+  }
+}

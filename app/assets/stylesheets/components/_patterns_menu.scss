@@ -4,7 +4,7 @@
     right: 0;
     bottom: 0;
     margin: 0 20px;
-    transition: bottom .5s ease;
+    transition: bottom .5s ease, visibility 1s ease, opacity 1s ease;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -55,5 +55,10 @@
       #hide-pattern-menu svg {
         transform: scale(1, -1);
       }
+    }
+
+    &.removed {
+      visibility: hidden;
+      opacity: 0;
     }
   }

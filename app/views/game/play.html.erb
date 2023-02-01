@@ -1,5 +1,5 @@
 <div id="game">
-  <%= render 'shared/nav', first_time_login: @first_time_login %>
+  <%= render 'nav', first_time_login: @first_time_login %>
 
   <canvas
     data-controller="game"
@@ -14,53 +14,6 @@
     <button id="create-solution" class="button secondary">Create solution</button>
   <% end %>
 
-  <div
-    id="patterns-menu"
-    class="hidden"
-    data-controller="patterns"
-    data-action="
-      game:currentPatternSolvedForTheFirstTime@document->patterns#solveCurrentPatternForTheFirstTime
-      game:currentPatternSolved@document->patterns#solveCurrentPattern
-      winning-modal:continue@document->patterns#changeCurrentPattern
-    "
-  >
-    <div
-      id="current-pattern"
-      data-patterns-target="currentPattern"
-      data-id="<%= @current_pattern.id %>"
-      data-solved="<%= @current_pattern.solved?(current_user) %>"
-      data-revealed="false"
-    >
-      <div data-patterns-target="currentPatternSvg" class="pattern-svg">
-        <%= pattern_svg(@current_pattern) %>
-      </div>
-      <div
-        data-patterns-target="revealPattern"
-        data-action="click->patterns#toggleRevealPattern"
-        class="reveal-pattern"
-      >
-        <%= svg 'icons/eye_fill.svg', 'eye' %>
-        <%= svg 'icons/eye_crossed.svg', 'eye-crossed' %>
-      </div>
-    </div>
-    <div id="hide-pattern-menu" data-action="click->patterns#toggle">
-      <%= svg 'icons/caret' %>
-    </div>
-    <div id="patterns">
-      <% @patterns.each do |pattern| %>
-        <div
-          class="pattern"
-          data-patterns-target="pattern"
-          data-id="<%= pattern.id %>"
-          data-action="click->patterns#changeCurrentPattern"
-          data-solved="<%= pattern.solved?(current_user) %>"
-          data-selected="<%= pattern == @current_pattern %>"
-        >
-          <%= pattern_svg(pattern) %>
-        </div>
-      <% end %>
-    </div>
-  </div>
-
-  <%= render 'shared/winning_modal' %>
+  <%= render 'pattern_menu' %>
+  <%= render 'winning_modal' %>
 </div>

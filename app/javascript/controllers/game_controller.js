@@ -329,7 +329,7 @@ export default class extends Controller {
       return this.comparePolygonsSolution(solution)
     })
 
-    if (polygonsMatchSolution) {
+    if (!polygonsMatchSolution) {
       console.log(`Bravo you found a pattern!`)
 
       if (!this.currentPatternSolvedValue) {

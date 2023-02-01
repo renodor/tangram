@@ -48,10 +48,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
   font-size: 14px;
   color: $color-primary;
   font-family: $font;
-  border-left: 1px solid $color-primary;
-  padding-left: 10px;
+  padding: 0;
 }

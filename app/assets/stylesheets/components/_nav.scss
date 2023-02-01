@@ -5,6 +5,21 @@
   padding: 10px;
   font-size: 14px;
   color: $color-primary;
-  column-gap: 10px;
   user-select: none;
+  transition: right .3s ease;
+
+  .nav-element {
+    border-right: 1px solid $color-primary;
+    padding: 0 10px;
+    cursor: pointer;
+
+    &:last-child {
+      padding-right: 0;
+      border-right: none;
+    }
+  }
+
+  &.small {
+    right: -160px;
+  }
 }

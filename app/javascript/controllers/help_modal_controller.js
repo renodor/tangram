@@ -10,7 +10,7 @@ export default class extends Controller {
 
   close() {
     this.containerTarget.dataset.open = false
-    document.getElementById('nav').style.position = "absolute"
+    document.getElementById('nav').style.position = "fixed"
   }
 
   maybeClose(event) {
