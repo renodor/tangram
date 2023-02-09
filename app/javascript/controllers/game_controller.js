@@ -83,7 +83,7 @@ export default class extends Controller {
     const maxPan = new THREE.Vector3(50, 50, 50);
     const orbitControlsFocusPoint = new THREE.Vector3();
 
-    this.orbitControls.addEventListener("change", () => {
+    this.orbitControls.addEventListener('change', () => {
       orbitControlsFocusPoint.copy(this.orbitControls.target)
       this.orbitControls.target.clamp(minPan, maxPan);
       orbitControlsFocusPoint.sub(this.orbitControls.target);
@@ -343,12 +343,12 @@ export default class extends Controller {
     })
 
     if (polygonsMatchSolution) {
-      console.log(`Bravo you found a pattern!`)
+      console.log('Bravo you found a pattern!')
 
       if (!this.currentPatternSolvedValue) {
         this.currentPatternSolvedValue = true
         fetch(
-          `/solved_patterns`,
+          '/solved_patterns',
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -419,7 +419,7 @@ export default class extends Controller {
     })
 
     fetch(
-      `/solutions`,
+      '/solutions',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

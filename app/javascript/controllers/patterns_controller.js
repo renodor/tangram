@@ -1,7 +1,7 @@
-import { Controller } from "@hotwired/stimulus"
+import { Controller } from '@hotwired/stimulus'
 
 export default class extends Controller {
-  static targets = ["currentPattern", "currentPatternSvg", "revealPattern", "pattern"]
+  static targets = ['currentPattern', 'currentPatternSvg', 'revealPattern', 'pattern']
 
   toggle() {
     this.element.classList.toggle('hidden')
