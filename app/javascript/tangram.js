@@ -1,5 +1,6 @@
 import polygonBuilder from 'polygonBuilder'
 
+// Helper class to build all polygons of a Tangram
 // For unit == 20 this will build the following polygons:
 // - cube: 7.0710678118654755 sides
 // - big triangle: 20 hypotenuse / 14.142135623730951 side / 14.142135623730951 altitude
@@ -8,15 +9,15 @@ import polygonBuilder from 'polygonBuilder'
 
 export default class Tangram {
   constructor(unit, textures) {
-    this.unit = unit;
-    this.textures = textures;
-    this.cube = this.buildCube()
-    this.bigTriangle1 = this.buildTriangle('bigTriangle', this.unit, 0x2f4e54, 0x223D42, 0.15, true)
-    this.bigTriangle2 = this.buildTriangle('bigTriangle', this.unit, 0x2f4e54, 0x223D42, 0.15, true)
+    this.unit           = unit;
+    this.textures       = textures;
+    this.cube           = this.buildCube()
+    this.bigTriangle1   = this.buildTriangle('bigTriangle', this.unit, 0x2f4e54, 0x223D42, 0.15, true)
+    this.bigTriangle2   = this.buildTriangle('bigTriangle', this.unit, 0x2f4e54, 0x223D42, 0.15, true)
     this.mediumTriangle = this.buildTriangle('mediumTriangle', this.unit * Math.sqrt(2) / 2, 0xb3c6c6, 0xa7baba, 0.1, false)
     this.smallTriangle1 = this.buildTriangle('smallTriangle', this.unit / 2, 0x7A9E9F, 0x6f8e8e, 0.09, true)
     this.smallTriangle2 = this.buildTriangle('smallTriangle', this.unit / 2, 0x7A9E9F, 0x6f8e8e, 0.09, true)
-    this.parallelogram = this.buildParallelogram()
+    this.parallelogram  = this.buildParallelogram()
   }
 
   buildCube() {

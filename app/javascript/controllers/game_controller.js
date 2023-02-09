@@ -16,11 +16,14 @@ export default class extends Controller {
     this.currentPatternSolutions // not a "value" because we don't want to expose that has a HTML data attribute...
   }
 
+  // Triggered when user change the pattern currently trying to be solved
   changeCurrentPattern({ detail: { id, solved } }) {
     this.currentPatternIdValue = id
     this.currentPatternSolvedValue = solved
   }
 
+  // Triggered when currentPatternId change,
+  // it will fetch new current pattern solutions and "solved" boolean value
   currentPatternIdValueChanged() {
     fetch(`/patterns/${this.currentPatternIdValue}`, { headers: { 'accept': 'application/json' } })
       .then((response) => response.json())
@@ -103,12 +106,15 @@ export default class extends Controller {
 
     this.selectedPolygon
 
+    // Event handlers
     this.pointerMoveHandler = this.onPointerMove.bind(this)
     window.addEventListener('resize', this.onWindowResize.bind(this))
     canvas.addEventListener('pointerdown', this.onPointerDown.bind(this))
     canvas.addEventListener('pointerup', this.onPointerUp.bind(this))
     canvas.addEventListener('dblclick', this.onDoubleClick.bind(this))
 
+    // Admin feature to add new solution to a pattern
+    // (triggered by a button only visible for admins)
     document.getElementById('create-solution')?.addEventListener('click', () => {
       this.createSolutionFromPolygons()
     });
@@ -124,8 +130,9 @@ export default class extends Controller {
     this.renderer.render(this.scene, this.camera)
   }
 
+  // Place polygons in an "harmonized" way when game starts
   setInitialPositions() {
-    let bigTriangleCount = 0
+    let bigTriangleCount   = 0
     let smallTriangleCount = 0
 
     this.tangram.polygons.forEach((polygon) => {
@@ -177,6 +184,7 @@ export default class extends Controller {
     )
   }
 
+  // Triggered when a polygon is clicked
   setSelectedPolygon(polygon) {
     if (this.selectedPolygon) { this.removeSelectedPolygon() }
 
@@ -301,9 +309,6 @@ export default class extends Controller {
   addCollisionToPolygon(polygon) {
     polygon.userData.isColliding = true
     this.findMain(polygon).material.opacity = 0.5
-    // this.findTop(polygon).material.opacity = 0
-    // polygon.children.forEach((child) => child.material.opacity = 0.5)
-    // polygon.children[1].material.color.setHex(0x808080)
   }
 
   removeCollisionToPolygon(polygon) {

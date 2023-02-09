@@ -1,10 +1,9 @@
 import * as THREE from 'three';
 
+// Helper method to build polygons with a top shape, a main shape, collision points and different user data
 export default ({ type, size, name, lightColor, darkColor, texturePath, textureRepetition, duplicated }) => {
-  // const hypotenuse = size * Math.sqrt(2)
-
   // SHAPE
-  const shape = new THREE.Shape()
+  const shape  = new THREE.Shape()
   const points = buildPoints(type, size)
   points.forEach(([x, y], index) => { index == 0 ? shape.moveTo(x, y) : shape.lineTo(x, y) })
 
@@ -57,6 +56,7 @@ export default ({ type, size, name, lightColor, darkColor, texturePath, textureR
   return polygon
 }
 
+// Add points to shape according to type
 const buildPoints = (type, size) => {
   switch (type) {
     case 'triangle':
@@ -82,6 +82,7 @@ const buildPoints = (type, size) => {
   }
 }
 
+// Center polygon according to type
 const centerPolygon = (polygon, size) => {
   switch (polygon.userData.type) {
     case 'triangle':
@@ -96,23 +97,13 @@ const centerPolygon = (polygon, size) => {
   }
 }
 
-const centerPoint = (type, point, size) => {
-  switch (type) {
-    case 'triangle':
-      return centerTrianglePoint(point, size)
-    case 'cube':
-      return centerCubePoint(point, size)
-    case 'parallelogram':
-      return centerParallelogramPoint(point, size)
-  }
-}
 const centerTrianglePoint = ([x, y, z], size) => ([x, y - ((size / 2) / 3), z])
 const centerCubePoint = ([x, y, z], size) => ([x - (size / 2), y - (size / 2), z])
 const centerParallelogramPoint = ([x, y, z], size) => ([x - (size - 2), y - (size / 4), z])
 
 
+// Add more points to polygon to detect collisions
 const addCollisionPointsToPolygon = (polygon, points, size) => {
-  // Add more points to polygon to detect collisions
   const type = polygon.userData.type
   let collisionPoints = []
   switch (type) {
@@ -222,12 +213,24 @@ const addCollisionPointsToPolygon = (polygon, points, size) => {
 
   collisionPoints.push(points[0])
   collisionPoints = collisionPoints.map(([x, y]) => centerPoint(type, [x, y, 0], size))
-  // collisionPoints = collisionPoints.map((collisionPoint) => collisionPoint.slice(0, -1))
 
   polygon.userData.originalPoints = collisionPoints
   polygon.userData.currentPoints = collisionPoints
 }
 
+// Center point according to type
+const centerPoint = (type, point, size) => {
+  switch (type) {
+    case 'triangle':
+      return centerTrianglePoint(point, size)
+    case 'cube':
+      return centerCubePoint(point, size)
+    case 'parallelogram':
+      return centerParallelogramPoint(point, size)
+  }
+}
+
+// Add vertices indexes to polygon
 const addVerticesIndexesToPolygon = (polygon) => {
   const verticesIndexes = []
   switch (polygon.userData.type) {
