@@ -184,7 +184,9 @@ export default class extends Controller {
     )
   }
 
-  // Triggered when a polygon is clicked
+  // Set a new polygon as the "selected" one
+  // selected polygon appear a bit more up and with less opacity than other polygons
+  // selected polygon is stored in selectedPolygon variable
   setSelectedPolygon(polygon) {
     if (this.selectedPolygon) { this.removeSelectedPolygon() }
 
@@ -193,17 +195,20 @@ export default class extends Controller {
     this.selectedPolygon.position.z = 0.1
   }
 
+  // Remove polygon from the "selected" one
   removeSelectedPolygon() {
     this.findTop(this.selectedPolygon).material.opacity = 0
     this.selectedPolygon = null
   }
 
+  // Update camera and renderer on window resize
   onWindowResize() {
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
+  // Flip the parallelogram polygon when double clicked
   onDoubleClick(event) {
     this.setPointer(event.clientX, event.clientY)
 
@@ -219,6 +224,11 @@ export default class extends Controller {
     }
   }
 
+  // When pointer is down (click or tap), check if a polygon has been clicked/taped,
+  // if yes, set this polygon as the new "selected polygon",
+  // and define if click/tap was made on top or main part of polygon
+  // (which later define if polygon needs to be rotated or draged)
+  // then if pointer moves, calls on PointerMove handler
   onPointerDown(event) {
     this.setPointer(event.clientX, event.clientY)
 
@@ -242,6 +252,8 @@ export default class extends Controller {
     }
   }
 
+  // When pointer is up (click or tap), if no polygons are colliding,
+  // check if the patern has been resolved
   onPointerUp() {
     this.canvas.removeEventListener('pointermove', this.pointerMoveHandler)
 
@@ -257,6 +269,8 @@ export default class extends Controller {
     this.orbitControls.enabled = true
   }
 
+  // Called only when a polygon has been clicked/taped and then pointer has moved,
+  // it will then call the relevant action to do (rotate, or drag the polygon)
   onPointerMove(event) {
     this.setPointer(event.clientX, event.clientY)
 
@@ -270,16 +284,21 @@ export default class extends Controller {
     }
   }
 
+  // Drag the selected polygon
   dragObject(planeIntersectionPoint) {
     this.selectedPolygon.position.x = planeIntersectionPoint.x - this.offset.x
     this.selectedPolygon.position.y = planeIntersectionPoint.y - this.offset.y
   }
 
+  // Rotate the selected polygon
   rotateObject(planeIntersectionPoint) {
     this.localIntersection.subVectors(planeIntersectionPoint, this.selectedPolygon.position)
     this.selectedPolygon.rotation.z = this.selectedPolygon.userData.savedRotation + (this.localIntersection.angle() - this.offset.angle())
   }
 
+  // Update selected polygon current points comparing it with its original points and the current polygon position
+  // then check for collisions
+  // this method is called any time a polygon has moved
   updateSelectedPolygonPointsAndCheckCollisions() {
     this.selectedPolygon.updateMatrixWorld()
     this.selectedPolygon.userData.currentPoints = this.selectedPolygon.userData.originalPoints.map(([x, y]) => {
@@ -290,6 +309,8 @@ export default class extends Controller {
     this.checkCollisions()
   }
 
+  // Check if any point of any polygon collides with any point of any other polygon
+  // if yes, add collision to both colliding polygons
   checkCollisions() {
     this.tangram.polygons.forEach((polygon) => this.removeCollisionToPolygon(polygon))
 
@@ -306,16 +327,20 @@ export default class extends Controller {
     })
   }
 
+  // Add collision to given polygon
   addCollisionToPolygon(polygon) {
     polygon.userData.isColliding = true
     this.findMain(polygon).material.opacity = 0.5
   }
 
+  // Remove collision to given polygon
   removeCollisionToPolygon(polygon) {
     polygon.userData.isColliding = false
     this.findMain(polygon).material.opacity = 1
   }
 
+  // Check if given point collides with any of the points of the given polygon
+  // Solution given by this post: https://discourse.threejs.org/t/find-simple-2d-shapes-collision/43517/12
   pointIsWithinPolygon(polygonPoints, x, y) {
     let windingNumber = 0; // winding number
     polygonPoints.slice(0, -1).forEach(([polygonX, polygonY], index) => {
@@ -331,15 +356,6 @@ export default class extends Controller {
     })
 
     return windingNumber != 0
-  }
-
-  polygonVerticesToPatternRefLocal(polygon) {
-    return polygon.userData.verticesIndexes.map((index) => {
-      const vertex = polygon.userData.currentPoints[index]
-      this.coordinate.set(vertex[0], vertex[1])
-      this.patternRef.worldToLocal(this.coordinate)
-      return [this.coordinate.x, this.coordinate.y]
-    })
   }
 
   checkPattern() {
@@ -367,6 +383,15 @@ export default class extends Controller {
         this.dispatch('currentPatternSolved')
       }
     }
+  }
+
+  polygonVerticesToPatternRefLocal(polygon) {
+    return polygon.userData.verticesIndexes.map((index) => {
+      const vertex = polygon.userData.currentPoints[index]
+      this.coordinate.set(vertex[0], vertex[1])
+      this.patternRef.worldToLocal(this.coordinate)
+      return [this.coordinate.x, this.coordinate.y]
+    })
   }
 
   comparePolygonsSolution(solution) {
