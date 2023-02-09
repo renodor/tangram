@@ -6,10 +6,10 @@
     <%= render 'help_modal', first_time_login: first_time_login %>
   </div>
   <div class="nav-element">
-    <%= button_to "Logout", destroy_user_session_path, method: "delete", class: "logout"  %>
+    <%= button_to 'Logout', destroy_user_session_path, method: 'delete', class: 'logout'  %>
   </div>
   <div class="nav-element">
-    <%= link_to "http://www.renodor.co", target: :blank, class: 'centered-flexbox' do %>
+    <%= link_to 'http://www.renodor.co', target: :blank, class: 'centered-flexbox' do %>
       <%= image_tag 'renodor.png', id: 'renodor' %>
     <% end %>
   </div>

@@ -1,3 +1,5 @@
+# frozen_string_literal:true
+
 # Pin npm packages by running ./bin/importmap
 
 pin 'application', preload: true
@@ -10,4 +12,3 @@ pin 'three-orbit-controls', to: 'https://ga.jspm.io/npm:three@0.146.0/examples/j
 
 pin 'tangram'
 pin 'polygonBuilder'
-

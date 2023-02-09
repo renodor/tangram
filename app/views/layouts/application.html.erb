@@ -7,12 +7,12 @@
     <%= csp_meta_tag %>
 
     <%= javascript_importmap_tags %>
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag 'application', 'data-turbo-track': 'reload' %>
     <%= favicon_link_tag asset_path('favicon.png') %>
   </head>
 
   <body>
     <%= yield %>
-    <%= render "shared/flash" %>
+    <%= render 'shared/flash' %>
   </body>
 </html>
