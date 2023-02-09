@@ -52,7 +52,8 @@
           color: $color-primary;
           font-weight: 400;
           margin: 0;
-          width: 500px;
+          padding: 0 25px;
+          max-width: 500px;
           text-align: center;
         }
       }
@@ -142,5 +143,11 @@
 @keyframes fill-color {
   100% {
     fill: $color-primary;
+  }
+}
+
+@media (max-width: 575px) {
+  .winning-modal-container .winning-modal .modal-content {
+      margin: 10px;
   }
 }
