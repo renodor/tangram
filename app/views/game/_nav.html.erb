@@ -8,4 +8,9 @@
   <div class="nav-element">
     <%= button_to "Logout", destroy_user_session_path, method: "delete", class: "logout"  %>
   </div>
+  <div class="nav-element">
+    <%= link_to "http://www.renodor.co", target: :blank, class: 'centered-flexbox' do %>
+      <%= image_tag 'renodor.png', id: 'renodor' %>
+    <% end %>
+  </div>
 </div>

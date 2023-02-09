@@ -13,6 +13,11 @@
     padding: 0 10px;
     cursor: pointer;
 
+    #renodor {
+      width: 18px;
+      height: 18px;
+    }
+
     &:last-child {
       padding-right: 0;
       border-right: none;
@@ -20,6 +25,6 @@
   }
 
   &.small {
-    right: -160px;
+    right: -200px;
   }
 }
