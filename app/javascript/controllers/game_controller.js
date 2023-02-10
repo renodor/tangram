@@ -358,6 +358,10 @@ export default class extends Controller {
     return windingNumber != 0
   }
 
+  // Check if pattern is solved,
+  // if yes, and it's the first time for this user, mark this pattern as solved for this user
+  // and dispatch "currentPatternSolvedForTheFirstTime" event that will trigger winning modal
+  // if yes, and user had already solved this pattern, trigger "currentPatternSolved" event that will just animate pattern icon
   checkPattern() {
     const polygonsMatchSolution = this.currentPatternSolutions.some((solution) => {
       return this.comparePolygonsSolution(solution)
@@ -385,15 +389,15 @@ export default class extends Controller {
     }
   }
 
-  polygonVerticesToPatternRefLocal(polygon) {
-    return polygon.userData.verticesIndexes.map((index) => {
-      const vertex = polygon.userData.currentPoints[index]
-      this.coordinate.set(vertex[0], vertex[1])
-      this.patternRef.worldToLocal(this.coordinate)
-      return [this.coordinate.x, this.coordinate.y]
-    })
-  }
-
+  // Compare current polygons positions against the given pattern solution:
+  // If polygon is the "patternRef" (the medium triangle), skip it.
+  // Indeed all solutions are generated taking the medium triangle as reference (always at the same position, in the center of the pattern),
+  // because it is the only polygon that can have only 1 exact position in every solutions:
+  // it is not duplicated (unlike other triangles), and it can't be rotate into the same position (unlike the square and parallelogram).
+  // For all other polygons, map all its current points into the local world of the pattern ref,
+  // and then compare all those points against the points of the same polygon of the solution, to know if the polygon is at the correct position
+  // (with an error margin of 2 units, so that polygons don't have to be at the exact same position than the solution)
+  // If all polygons are at the correct position return true, it means user found one of the solutions of the current pattern
   comparePolygonsSolution(solution) {
     return this.tangram.polygons.every((polygon) => {
       if (polygon == this.patternRef) { return true }
@@ -427,18 +431,33 @@ export default class extends Controller {
     })
   }
 
+  // Map points of the given polygons to the local world of pattern ref
+  polygonVerticesToPatternRefLocal(polygon) {
+    return polygon.userData.verticesIndexes.map((index) => {
+      const vertex = polygon.userData.currentPoints[index]
+      this.coordinate.set(vertex[0], vertex[1])
+      this.patternRef.worldToLocal(this.coordinate)
+      return [this.coordinate.x, this.coordinate.y]
+    })
+  }
+
+  // Flip given polygon horizontally
   flipPolygon(polygon) {
     polygon.scale.x *= -1
   }
 
+  // Helper method to find top shape of given polygon
   findTop(polygon) {
     return polygon.children.find((child) => child.userData.type == 'top')
   }
 
+  // Helper method to find main shape of given polygon
   findMain(polygon) {
     return polygon.children.find((child) => child.userData.type == 'main')
   }
 
+  // Only accessible by admin users.
+  // Helper to easily create new solution for current pattern from the position of current polygons
   createSolutionFromPolygons() {
     const polygons = this.tangram.polygons.map((polygon) => {
       const roundedVertices = this.polygonVerticesToPatternRefLocal(polygon).map(([x, y]) => [this.roundAtTwoDecimal(x), this.roundAtTwoDecimal(y)])
@@ -469,6 +488,7 @@ export default class extends Controller {
     })
   }
 
+  // Helper method to round number
   roundAtTwoDecimal(num) {
     return Math.round((num + Number.EPSILON) * 100) / 100
   }
