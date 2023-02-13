@@ -481,7 +481,7 @@ export default class extends Controller {
       }
     ).then((response) => {
       if (response.status == 201) {
-        console.log(`New solution created for current pattern (with id: ${this.currentPatternIdValue}`)
+        console.log(`New solution created for current pattern (with id: ${this.currentPatternIdValue})`)
       } else {
         console.log(`Error: ${response.status}`)
       }
