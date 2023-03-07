@@ -1,6 +1,19 @@
-<div id="nav" class="centered-flexbox" style="position: <%= first_time_login ? 'static' : 'fixed' %>">
-  <div class="nav-element">
-    <%= render 'full_screen' %>
+<div
+  id="nav"
+  class="centered-flexbox"
+  style="position: <%= first_time_login ? 'static' : 'fixed' %>"
+  data-controller="nav"
+  data-full-screen="false"
+>
+  <div
+    id="full-screen"
+    class="nav-element"
+    data-action="click->nav#toggle"
+    data-nav-target="fullScreenTrigger"
+  >
+    <span class="disabled-text">Go</span>
+    <span class="enabled-text">Exit</span>
+    full screen
   </div>
   <div class="nav-element">
     <%= render 'help_modal', first_time_login: first_time_login %>

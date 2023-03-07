@@ -109,9 +109,12 @@ export default class extends Controller {
     // Event handlers
     this.pointerMoveHandler = this.onPointerMove.bind(this)
     window.addEventListener('resize', this.onWindowResize.bind(this))
+    window.addEventListener('orientationchange', this.onWindowResize.bind(this)) // Legacy event for old devices
     canvas.addEventListener('pointerdown', this.onPointerDown.bind(this))
     canvas.addEventListener('pointerup', this.onPointerUp.bind(this))
     canvas.addEventListener('dblclick', this.onDoubleClick.bind(this))
+
+    // canvas.addEventListener('touchstart', this.processTouchstart, false);
 
     // Admin feature to add new solution to a pattern
     // (triggered by a button only visible for admins)
@@ -129,6 +132,16 @@ export default class extends Controller {
     this.orbitControls.update()
     this.renderer.render(this.scene, this.camera)
   }
+
+  // processTouchstart(ev) {
+  //   // Use the event's data to call out to the appropriate gesture handlers
+  //   switch (ev.touches.length) {
+  //     case 1: document.querySelector('#debug').innerHTML = 'ONE'; break;
+  //     case 2: document.querySelector('#debug').innerHTML = 'TWO'; break;
+  //     case 3: document.querySelector('#debug').innerHTML = 'THREE'; break;
+  //     default: document.querySelector('#debug').innerHTML = 'OTHER'; break;
+  //   }
+  // }
 
   // Place polygons in an "harmonized" way when game starts
   setInitialPositions() {
@@ -231,6 +244,8 @@ export default class extends Controller {
   // then if pointer moves, calls on PointerMove handler
   onPointerDown(event) {
     this.setPointer(event.clientX, event.clientY)
+
+    document.querySelector('#debug').innerHTML = event.touches.length
 
     this.raycaster.setFromCamera(this.pointer, this.camera)
     const polygonIntersection = this.raycaster.intersectObjects(this.tangram.polygons)[0];
@@ -370,7 +385,7 @@ export default class extends Controller {
     if (polygonsMatchSolution) {
       console.log('Bravo you found a pattern!')
 
-      if (!this.currentPatternSolvedValue) {
+      if (this.currentPatternSolvedValue) {
         this.currentPatternSolvedValue = true
         fetch(
           '/solved_patterns',

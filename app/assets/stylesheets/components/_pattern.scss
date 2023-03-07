@@ -12,10 +12,6 @@
     stroke-width: 3px;
   }
 
-  &:hover {
-    background-color: $color-secondary;
-  }
-
   &[data-solved=true] {
     path {
       fill: $color-primary;

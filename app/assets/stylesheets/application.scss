@@ -5,7 +5,6 @@
 
 @import 'components/logo';
 @import 'components/nav';
-@import 'components/full_screen';
 @import 'components/patterns_menu';
 @import 'components/pattern';
 @import 'components/current_pattern';
@@ -23,5 +22,13 @@
 
 body {
   font-family: $font;
+
+  #game {
+    user-select: none;
+
+    canvas {
+      user-select: none;
+    }
+  }
 }
 

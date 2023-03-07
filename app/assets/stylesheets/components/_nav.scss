@@ -24,6 +24,24 @@
     }
   }
 
+  #full-screen {
+    .enabled-text {
+      display: none;
+    }
+  }
+
+  &[data-full-screen=true] {
+    #full-screen {
+      .disabled-text {
+        display: none;
+      }
+
+      .enabled-text {
+        display: inline;
+      }
+    }
+  }
+
   &.small {
     right: -200px;
   }
