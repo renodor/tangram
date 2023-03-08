@@ -219,7 +219,7 @@ export default class extends Controller {
   // this allows to trigger doublePointerDownHandler method in case of double click/tap
   onPointerDown(event) {
     event.preventDefault()
-    this.pointerDownCount += 1
+    if (event.isPrimary) { this.pointerDownCount += 1 }
     this.simplePointerDownHandler(event)
 
     if (this.pointerDownCount > 1) {
@@ -244,7 +244,7 @@ export default class extends Controller {
     this.raycaster.setFromCamera(this.pointer, this.camera)
     const polygonIntersection = this.raycaster.intersectObjects(this.tangram.polygons)[0];
 
-    if (polygonIntersection) {
+    if (polygonIntersection && event.isPrimary) {
       this.orbitControls.enabled = false
 
       const movementType = polygonIntersection.object.userData.type == 'top' ? 'drag' : 'rotate'
@@ -392,10 +392,10 @@ export default class extends Controller {
       return this.comparePolygonsSolution(solution)
     })
 
-    if (polygonsMatchSolution) {
+    if (!polygonsMatchSolution) {
       console.log('Bravo you found a pattern!')
 
-      if (this.currentPatternSolvedValue) {
+      if (!this.currentPatternSolvedValue) {
         this.currentPatternSolvedValue = true
         fetch(
           '/solved_patterns',

@@ -8,18 +8,27 @@ export default class extends Controller {
   }
 
   toggle() {
-    this.fullScreen = !this.fullScreen;
-    document.getElementById('patterns-menu').classList.toggle('removed');
-
-    this.element.dataset.fullScreen = this.fullScreen;
-
     if (this.fullScreen) {
-      const navWidth = this.element.offsetWidth;
-      const elementWidth = this.fullScreenTriggerTarget.offsetWidth;
-      const offset = navWidth - (elementWidth + 20);
-      this.element.style.right = `-${offset}px`;
+      this.exitFullScreen()
     } else {
-      this.element.style.right = 0;
+      this.enterFullScreen()
     }
+  }
+
+  enterFullScreen() {
+    this.fullScreen = true
+    this.element.dataset.fullScreen = this.fullScreen;
+    document.getElementById('patterns-menu').classList.add('removed');
+    const navWidth = this.element.offsetWidth;
+    const elementWidth = this.fullScreenTriggerTarget.offsetWidth;
+    const offset = navWidth - (elementWidth + 20);
+    this.element.style.right = `-${offset}px`;
+  }
+
+  exitFullScreen() {
+    this.fullScreen = false
+    this.element.dataset.fullScreen = this.fullScreen;
+    document.getElementById('patterns-menu').classList.remove('removed');
+    this.element.style.right = 0;
   }
 }
