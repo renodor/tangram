@@ -35,7 +35,7 @@
       align-items: center;
       opacity: 0;
       transition: opacity 1s ease-in-out;
-      overflow-y: scroll;
+      overflow-y: overlay;
 
       &::-webkit-scrollbar {
         width: 20px;
@@ -50,7 +50,7 @@
       .modal-close {
         position: absolute;
         top: 10px;
-        right: 5px;
+        right: 20px;
         cursor: pointer;
         opacity: 0.7;
 

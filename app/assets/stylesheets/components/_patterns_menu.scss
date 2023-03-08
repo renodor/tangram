@@ -34,7 +34,7 @@
       display: flex;
       column-gap: 50px;
       justify-content: space-between;
-      overflow-x: scroll;
+      overflow-x: overlay;
       border-radius: $border-radius;
       border: $border;
 
@@ -50,7 +50,7 @@
     }
 
     &.hidden {
-      bottom: -155px;
+      bottom: -137px;
 
       #hide-pattern-menu svg {
         transform: scale(1, -1);
