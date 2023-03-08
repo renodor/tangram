@@ -96,7 +96,7 @@ export default class extends Controller {
     // Collision
     this.coordinate = new THREE.Vector3()
 
-    // RAYCASTER
+    // Raycaster
     this.raycaster = new THREE.Raycaster()
     this.worldPosition = new THREE.Vector3()
     this.pointer = new THREE.Vector2()
@@ -106,15 +106,18 @@ export default class extends Controller {
 
     this.selectedPolygon
 
+    // Used to count pointer down event in order to react in case of double click/tap
+    this.pointerDownCount = 0
+    this.pointerDownTimeOutId
+
     // Event handlers
     this.pointerMoveHandler = this.onPointerMove.bind(this)
     window.addEventListener('resize', this.onWindowResize.bind(this))
     window.addEventListener('orientationchange', this.onWindowResize.bind(this)) // Legacy event for old devices
     canvas.addEventListener('pointerdown', this.onPointerDown.bind(this))
     canvas.addEventListener('pointerup', this.onPointerUp.bind(this))
-    canvas.addEventListener('dblclick', this.onDoubleClick.bind(this))
-
-    // canvas.addEventListener('touchstart', this.processTouchstart, false);
+    // canvas.addEventListener('pointerup', this.onPointerUpMaybeDouble.bind(this))
+    // canvas.addEventListener('dblclick', this.onDoubleClick.bind(this))
 
     // Admin feature to add new solution to a pattern
     // (triggered by a button only visible for admins)
@@ -132,16 +135,6 @@ export default class extends Controller {
     this.orbitControls.update()
     this.renderer.render(this.scene, this.camera)
   }
-
-  // processTouchstart(ev) {
-  //   // Use the event's data to call out to the appropriate gesture handlers
-  //   switch (ev.touches.length) {
-  //     case 1: document.querySelector('#debug').innerHTML = 'ONE'; break;
-  //     case 2: document.querySelector('#debug').innerHTML = 'TWO'; break;
-  //     case 3: document.querySelector('#debug').innerHTML = 'THREE'; break;
-  //     default: document.querySelector('#debug').innerHTML = 'OTHER'; break;
-  //   }
-  // }
 
   // Place polygons in an "harmonized" way when game starts
   setInitialPositions() {
@@ -221,19 +214,22 @@ export default class extends Controller {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
   }
 
-  // Flip the parallelogram polygon when double clicked
-  onDoubleClick(event) {
-    this.setPointer(event.clientX, event.clientY)
+  // On pointer down trigger simplePointerDownHandler method
+  // but also a 300ms timer during witch we listen for other pointer down event
+  // this allows to trigger doublePointerDownHandler method in case of double click/tap
+  onPointerDown(event) {
+    event.preventDefault()
+    this.pointerDownCount += 1
+    this.simplePointerDownHandler(event)
 
-    this.raycaster.setFromCamera(this.pointer, this.camera)
-    const polygonIntersection = this.raycaster.intersectObjects(this.tangram.polygons)[0];
-
-    if (polygonIntersection) {
-      this.setSelectedPolygon(polygonIntersection.object.parent)
-      if (this.selectedPolygon.userData.type == 'parallelogram') {
-        this.flipPolygon(this.selectedPolygon)
-        this.updateSelectedPolygonPointsAndCheckCollisions()
-      }
+    if (this.pointerDownCount > 1) {
+      clearTimeout(this.pointerDownTimeOutId)
+      this.pointerDownCount = 0
+      this.doublePointerDownHandler(event)
+    } else {
+      this.pointerDownTimeOutId = setTimeout(() => {
+        this.pointerDownCount = 0
+      }, 300);
     }
   }
 
@@ -242,10 +238,8 @@ export default class extends Controller {
   // and define if click/tap was made on top or main part of polygon
   // (which later define if polygon needs to be rotated or draged)
   // then if pointer moves, calls on PointerMove handler
-  onPointerDown(event) {
+  simplePointerDownHandler(event) {
     this.setPointer(event.clientX, event.clientY)
-
-    document.querySelector('#debug').innerHTML = event.touches.length
 
     this.raycaster.setFromCamera(this.pointer, this.camera)
     const polygonIntersection = this.raycaster.intersectObjects(this.tangram.polygons)[0];
@@ -264,6 +258,22 @@ export default class extends Controller {
       this.canvas.addEventListener('pointermove', this.pointerMoveHandler)
     } else if (this.selectedPolygon) {
       this.removeSelectedPolygon()
+    }
+  }
+
+  // Flip the parallelogram polygon when double clicked
+  doublePointerDownHandler(event) {
+    this.setPointer(event.clientX, event.clientY)
+
+    this.raycaster.setFromCamera(this.pointer, this.camera)
+    const polygonIntersection = this.raycaster.intersectObjects(this.tangram.polygons)[0];
+
+    if (polygonIntersection) {
+      this.setSelectedPolygon(polygonIntersection.object.parent)
+      if (this.selectedPolygon.userData.type == 'parallelogram') {
+        this.flipPolygon(this.selectedPolygon)
+        this.updateSelectedPolygonPointsAndCheckCollisions()
+      }
     }
   }
 
