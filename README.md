@@ -1,24 +1,11 @@
 # README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+A simple Tangram game. My first try using Three.js
 
-Things you may want to cover:
+[Go to production website](https://tangram.herokuapp.com/)
+(Because it is hosted in a basic Heroku plan, the app may take a few seconds to load the first time you launch it.)
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+### Built With
+* [Ruby on Rails](https://rubyonrails.org/) (Ruby 3.2.0 / Rails 7.0.3)
+* [Three.js](https://threejs.org/)
+* [Stimulus](https://stimulus.hotwired.dev/)
