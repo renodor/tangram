@@ -35,7 +35,7 @@
       align-items: center;
       opacity: 0;
       transition: opacity 1s ease-in-out;
-      overflow-y: auto;
+      overflow-y: scroll;
 
       &::-webkit-scrollbar {
         width: 20px;
