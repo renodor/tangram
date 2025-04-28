@@ -8,8 +8,8 @@ ruby '3.4.3'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails', branch: 'main'
 gem 'rails', '~> 8.0.2'
 
-# The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
-gem 'sprockets-rails'
+# The modern asset pipeline for Rails [https://github.com/rails/propshaft]
+gem 'propshaft'
 
 # Use postgresql as the database for Active Record
 gem 'pg', '>= 0.18', '< 2.0'
@@ -43,6 +43,8 @@ gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', require: false
+
+gem 'thruster', require: false
 
 # Use Sass to process CSS
 # gem 'sassc-rails'
